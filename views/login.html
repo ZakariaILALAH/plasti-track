@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Connexion - PLASTI'TRACK</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="container" style="max-width: 500px; margin-top: 80px;">
+        <h2>Connexion</h2>
+        <form id="loginForm">
+            <input type="email" id="email" placeholder="Email" required>
+            <input type="password" id="password" placeholder="Mot de passe" required>
+            <button type="submit">Se connecter</button>
+        </form>
+        <p>Pas de compte ? <a href="/register">Inscription</a></p>
+        <div id="message"></div>
+    </div>
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const res = await fetch('/api/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email: document.getElementById('email').value,
+                    password: document.getElementById('password').value
+                })
+            });
+            const data = await res.json();
+            if (data.success) {
+                window.location.href = '/profils';
+            } else {
+				messageDiv.innerText = data.error || 'Erreur de connexion';
+				messageDiv.style.color = 'red';
+            }
+		} catch (err) {
+			messageDiv.innerText = 'Erreur reseau';
+			}
+        });
+    </script>
+</body>
+</html>

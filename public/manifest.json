@@ -1,0 +1,25 @@
+{
+  "name": "PLASTI'TRACK",
+  "short_name": "PlastiTrack",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f3b2c",
+  "theme_color": "#00A859",
+  "icons": [
+    {
+      "src": "/icons/icon-72.png",
+      "sizes": "72x72",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

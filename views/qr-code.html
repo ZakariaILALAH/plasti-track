@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mon QR Code - PLASTI'TRACK</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="container" style="text-align: center;">
+        <h1>Votre QR Code collecteur</h1>
+        <p>Présentez ce code lors des collectes pour valider les dépôts.</p>
+        <div id="qrcode"></div>
+        <button onclick="window.location.href='/profil'">Mon profil</button>
+        <button onclick="fetch('/api/logout').then(()=>window.location.href='/')">Déconnexion</button>
+    </div>
+    <script>
+        fetch('/api/my-qrcode')
+            .then(res => res.json())
+            .then(data => {
+                if (data.qrImage) {
+                    const img = document.createElement('img');
+                    img.src = data.qrImage;
+                    img.style.width = '250px';
+                    document.getElementById('qrcode').appendChild(img);
+                } else {
+                    document.getElementById('qrcode').innerText = "Erreur chargement QR code";
+                }
+            });
+    </script>
+</body>
+</html>

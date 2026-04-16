@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Inscription - PLASTI'TRACK</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="container" style="max-width: 500px; margin-top: 80px;">
+        <h2>Inscription</h2>
+        <form id="registerForm">
+            <input type="text" id="nom" placeholder="Nom complet" required>
+            <input type="email" id="email" placeholder="Email" required>
+            <input type="password" id="password" placeholder="Mot de passe" required>
+            <select id="role">
+                <option value="citoyen">Citoyen</option>
+                <option value="collecteur">Collecteur</option>
+                <option value="operateur">Opérateur</option>
+            </select>
+            <input type="tel" id="telephone" placeholder="Téléphone">
+            <button type="submit">S'inscrire</button>
+        </form>
+        <p>Déjà inscrit ? <a href="/login">Se connecter</a></p>
+        <div id="message"></div>
+    </div>
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const data = {
+                nom: document.getElementById('nom').value,
+                email: document.getElementById('email').value,
+                password: document.getElementById('password').value,
+                role: document.getElementById('role').value,
+                telephone: document.getElementById('telephone').value
+            };
+            const res = await fetch('/api/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            const result = await res.json();
+            if (result.success) {
+                alert("Inscription réussie ! Vous pouvez vous connecter.");
+                window.location.href = '/login';
+            } else {
+                document.getElementById('message').innerText = result.error;
+            }
+        });
+    </script>
+</body>
+</html>
