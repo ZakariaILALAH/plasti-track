@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mon profil - PLASTI'TRACK</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Mon espace</h1>
+        <div id="profilInfo"></div>
+        <h2>Mes points : <span id="points">0</span></h2>
+        <button onclick="fetch('/api/logout').then(()=>window.location.href='/')">Déconnexion</button>
+        <p><a href="/galerie">Voir la galerie</a></p>
+    </div>
+    <script>
+        fetch('/api/me') // à ajouter dans server.js
+            .then(r => r.json())
+            .then(user => {
+                document.getElementById('profilInfo').innerHTML = `<p>Nom : ${user.nom}</p><p>Email : ${user.email}</p><p>Rôle : ${user.role}</p>`;
+                document.getElementById('points').innerText = user.points;
+            });
+    </script>
+</body>
+</html>

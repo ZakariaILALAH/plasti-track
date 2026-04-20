@@ -117,3 +117,24 @@ router.post('/contact', async (req, res) => {
 });
 
 module.exports = router;
+
+// Récupérer l'utilisateur connecté (session)
+router.get('/me', (req, res) => {
+  if (!req.session.userId) return res.status(401).json({ error: "Non authentifié" });
+  const user = db.prepare(`SELECT id, nom, email, role, points, telephone, created_at FROM users WHERE id = ?`).get(req.session.userId);
+  if (!user) return res.status(404).json({ error: "Utilisateur introuvable" });
+  res.json(user);
+});
+
+// Récupérer l'historique des dépôts de l'utilisateur
+router.get('/me/depots', (req, res) => {
+  if (!req.session.userId) return res.status(401).json({ error: "Non authentifié" });
+  const depots = db.prepare(`
+    SELECT d.*, c.nom as point_nom, c.adresse
+    FROM depots d
+    JOIN collect_points c ON d.point_id = c.id
+    WHERE d.user_id = ?
+    ORDER BY d.date_depot DESC
+  `).all(req.session.userId);
+  res.json(depots);
+});
