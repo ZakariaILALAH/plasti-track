@@ -3,62 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <title>Galerie - PLASTI'TRACK</title>
+    <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* Mêmes styles de base (copier depuis contact) */
-        * { margin:0; padding:0; box-sizing:border-box; }
-        body { font-family: 'Poppins', sans-serif; background: #0a1f18; color: #e0f2e9; overflow-x: hidden; }
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap');
-        .animated-bg { position:fixed; top:0; left:0; width:100%; height:100%; z-index:-2; background: linear-gradient(135deg, #0a2e1f, #0c3b2a, #1a5a3e); background-size:300% 300%; animation: gradientShift 12s ease infinite; }
-        @keyframes gradientShift { 0% { background-position:0% 50%; } 50% { background-position:100% 50%; } 100% { background-position:0% 50%; } }
-        .particles { position:fixed; top:0; left:0; width:100%; height:100%; z-index:-1; pointer-events:none; }
-        .particle { position:absolute; background:rgba(255,193,7,0.3); border-radius:50%; animation:floatParticle 15s infinite linear; }
-        @keyframes floatParticle { 0% { transform:translateY(100vh) rotate(0deg); opacity:0; } 10% { opacity:0.8; } 90% { opacity:0.8; } 100% { transform:translateY(-20vh) rotate(360deg); opacity:0; } }
-        .top-header { position:fixed; top:20px; right:30px; z-index:100; display:flex; gap:15px; }
-        .auth-btn { padding:10px 24px; border-radius:40px; text-decoration:none; font-weight:600; transition:all 0.3s; backdrop-filter:blur(10px); background:rgba(255,255,255,0.1); color:white; border:1px solid rgba(255,255,255,0.3); }
-        .auth-btn:hover { transform:scale(1.05); background:#FFC107; color:#0a1f18; border-color:#FFC107; box-shadow:0 0 15px rgba(255,193,7,0.5); }
-        .register-btn { background:#FFC107; color:#0a1f18; }
-        .side-menu { position:fixed; left:0; top:0; height:100vh; width:280px; background:rgba(10,31,24,0.85); backdrop-filter:blur(12px); border-right:1px solid rgba(255,193,7,0.3); z-index:90; display:flex; flex-direction:column; justify-content:center; padding:2rem 0; box-shadow:5px 0 20px rgba(0,0,0,0.3); }
-        .menu-logo { text-align:center; margin-bottom:40px; padding:0 20px; }
-        .menu-logo i { font-size:3rem; color:#FFC107; filter:drop-shadow(0 0 8px #FFC107); animation:rotateLogo 4s infinite linear; }
-        @keyframes rotateLogo { from { transform:rotate(0deg); } to { transform:rotate(360deg); } }
-        .menu-logo h2 { margin-top:10px; font-size:1.5rem; letter-spacing:2px; }
-        .menu-items { display:flex; flex-direction:column; gap:15px; padding:0 20px; }
-        .menu-item { display:flex; align-items:center; gap:15px; padding:12px 20px; border-radius:50px; color:#e0f2e9; text-decoration:none; font-weight:500; transition:all 0.3s; background:rgba(255,255,255,0.05); backdrop-filter:blur(4px); border:1px solid rgba(255,193,7,0.2); }
-        .menu-item i { font-size:1.3rem; width:30px; text-align:center; transition:transform 0.3s, color 0.3s; }
-        .menu-item span { font-size:1rem; }
-        .menu-item:hover { background:rgba(255,193,7,0.2); border-color:#FFC107; transform:translateX(8px); box-shadow:0 5px 15px rgba(0,0,0,0.2); }
-        .menu-item:hover i { transform:scale(1.2) rotate(5deg); color:#FFC107; }
-        .main-content { margin-left:300px; padding:40px 50px; position:relative; z-index:1; min-height:100vh; }
-        .page-title { font-size:2.5rem; text-align:center; margin-bottom:20px; background:linear-gradient(135deg, #FFC107, #00A859); -webkit-background-clip:text; background-clip:text; color:transparent; }
-        .upload-area { background:rgba(255,255,255,0.08); border-radius:30px; padding:25px; margin-bottom:40px; text-align:center; border:1px dashed rgba(255,193,7,0.5); }
-        .upload-area input, .upload-area textarea { margin:10px 0; padding:10px; width:80%; border-radius:30px; border:none; background:rgba(255,255,255,0.2); color:white; }
-        .upload-area button { background:#FFC107; color:#0a1f18; padding:10px 25px; border:none; border-radius:40px; font-weight:bold; cursor:pointer; }
-        .gallery-grid { display:flex; flex-wrap:wrap; gap:25px; justify-content:center; }
-        .gallery-item { background:rgba(255,255,255,0.08); border-radius:20px; overflow:hidden; width:250px; text-align:center; padding:15px; backdrop-filter:blur(8px); transition:0.3s; }
-        .gallery-item img { width:100%; height:180px; object-fit:cover; border-radius:15px; }
-        .gallery-item p { margin-top:10px; font-size:0.9rem; }
-        footer { margin-top:60px; text-align:center; padding:20px; border-top:1px solid rgba(255,193,7,0.2); }
-        @media (max-width:900px) { .side-menu { width:80px; } .side-menu .menu-logo h2, .side-menu .menu-item span { display:none; } .side-menu .menu-item { justify-content:center; padding:12px; } .side-menu .menu-item i { margin-right:0; font-size:1.6rem; } .main-content { margin-left:100px; padding:20px; } .page-title { font-size:1.8rem; } }
+        .upload-area { background: rgba(255,255,255,0.08); backdrop-filter: blur(8px); border-radius: 25px; padding: 25px; margin-bottom: 40px; text-align: center; border: 1px dashed rgba(255,193,7,0.5); }
+        .upload-area input, .upload-area textarea { margin: 10px 0; padding: 10px; width: 80%; border-radius: 30px; border: none; background: rgba(255,255,255,0.2); color: white; }
+        .upload-area button { background: #FFC107; color: #0a1f18; padding: 10px 25px; border: none; border-radius: 40px; font-weight: bold; cursor: pointer; }
+        .gallery-grid { display: flex; flex-wrap: wrap; gap: 25px; justify-content: center; }
+        .gallery-item { background: rgba(255,255,255,0.08); backdrop-filter: blur(8px); border-radius: 20px; overflow: hidden; width: 260px; text-align: center; padding: 15px; transition: 0.3s; border: 1px solid rgba(255,193,7,0.3); }
+        .gallery-item:hover { transform: translateY(-5px); border-color: #FFC107; }
+        .gallery-item img { width: 100%; height: 180px; object-fit: cover; border-radius: 15px; }
     </style>
 </head>
 <body>
     <div class="animated-bg"></div>
     <div class="particles" id="particles"></div>
-    <div class="top-header"><a href="/login" class="auth-btn"><i class="fas fa-sign-in-alt"></i> Connexion</a><a href="/register" class="auth-btn register-btn"><i class="fas fa-user-plus"></i> Inscription</a></div>
-    <div class="side-menu"><div class="menu-logo"><i class="fas fa-recycle"></i><h2>PLASTI'<br>TRACK</h2></div>
+
+    <header class="main-header">
+        <div class="header-container">
+            <button class="hamburger" id="hamburgerBtn"><i class="fas fa-bars"></i></button>
+            <a href="/" class="logo-title"><i class="fas fa-recycle"></i> PLASTI'TRACK</a>
+            <div class="auth-buttons">
+                <a href="/login" class="auth-btn"><i class="fas fa-sign-in-alt"></i> Connexion</a>
+                <a href="/register" class="auth-btn register-btn"><i class="fas fa-user-plus"></i> Inscription</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="side-menu" id="sideMenu">
         <div class="menu-items">
-            <a href="/" class="menu-item"><i class="fas fa-home"></i><span>Accueil</span></a>
-            <a href="/objectifs" class="menu-item"><i class="fas fa-bullseye"></i><span>Objectifs</span></a>
-            <a href="/fonctionnalites" class="menu-item"><i class="fas fa-cogs"></i><span>Fonctionnalités</span></a>
-            <a href="/impact" class="menu-item"><i class="fas fa-chart-line"></i><span>Impact</span></a>
-            <a href="/carte" class="menu-item"><i class="fas fa-map-marked-alt"></i><span>Carte</span></a>
-            <a href="/dashboard" class="menu-item"><i class="fas fa-tachometer-alt"></i><span>Dashboard</span></a>
-            <a href="/galerie" class="menu-item"><i class="fas fa-images"></i><span>Galerie</span></a>
-            <a href="/contact" class="menu-item"><i class="fas fa-envelope"></i><span>Contact</span></a>
+            <a href="/" class="menu-item"><i class="fas fa-home"></i> Accueil</a>
+            <a href="/objectifs" class="menu-item"><i class="fas fa-bullseye"></i> Objectifs</a>
+            <a href="/fonctionnalites" class="menu-item"><i class="fas fa-cogs"></i> Fonctionnalités</a>
+            <a href="/impact" class="menu-item"><i class="fas fa-chart-line"></i> Impact</a>
+            <a href="/carte" class="menu-item"><i class="fas fa-map-marked-alt"></i> Carte</a>
+            <a href="/dashboard" class="menu-item"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+            <a href="/galerie" class="menu-item"><i class="fas fa-images"></i> Galerie</a>
+            <a href="/contact" class="menu-item"><i class="fas fa-envelope"></i> Contact</a>
         </div>
     </div>
-    <div class="main-content">
+    <div class="menu-overlay" id="menuOverlay"></div>
+
+    <main class="main-content">
         <h1 class="page-title">Nos actions en images</h1>
         <div class="upload-area">
             <input type="file" id="imageUpload" accept="image/*">
@@ -66,12 +52,58 @@
             <button id="uploadBtn"><i class="fas fa-cloud-upload-alt"></i> Partager</button>
         </div>
         <div id="gallery" class="gallery-grid"></div>
-        <footer><p>© 2025 PLASTI'TRACK - Incubé par CIPMEN - Lauréat UNICEF</p></footer>
-    </div>
+    </main>
+
     <script>
-        function createParticles() { const container = document.getElementById('particles'); for (let i=0;i<60;i++) { const p=document.createElement('div'); p.classList.add('particle'); const size=Math.random()*6+2; p.style.width=`${size}px`; p.style.height=`${size}px`; p.style.left=`${Math.random()*100}%`; p.style.animationDuration=`${Math.random()*10+8}s`; p.style.animationDelay=`${Math.random()*5}s`; p.style.background=`rgba(255,193,7,${Math.random()*0.5})`; container.appendChild(p); } } createParticles();
-        async function loadGallery() { const res = await fetch('/api/galerie-images'); const images = await res.json(); const galleryDiv = document.getElementById('gallery'); galleryDiv.innerHTML = images.map(img => `<div class="gallery-item"><img src="${img.image_path}" alt="photo"><p>${img.description} - ${img.user_nom}</p></div>`).join(''); }
-        document.getElementById('uploadBtn').onclick = async () => { const file = document.getElementById('imageUpload').files[0]; if(!file) return alert("Choisissez une image"); const description = document.getElementById('desc').value; const formData = new FormData(); formData.append('image', file); formData.append('userId', 1); formData.append('description', description); await fetch('/api/upload-galerie', { method:'POST', body:formData }); loadGallery(); document.getElementById('desc').value=''; };
+        function createParticles() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 60; i++) {
+                const p = document.createElement('div');
+                p.classList.add('particle');
+                const size = Math.random() * 6 + 2;
+                p.style.width = `${size}px`;
+                p.style.height = `${size}px`;
+                p.style.left = `${Math.random() * 100}%`;
+                p.style.animationDuration = `${Math.random() * 10 + 8}s`;
+                p.style.animationDelay = `${Math.random() * 5}s`;
+                p.style.background = `rgba(255, 193, 7, ${Math.random() * 0.5})`;
+                container.appendChild(p);
+            }
+        }
+        createParticles();
+
+        const hamburger = document.getElementById('hamburgerBtn');
+        const sideMenu = document.getElementById('sideMenu');
+        const overlay = document.getElementById('menuOverlay');
+        function closeMenu() { sideMenu.classList.remove('open'); overlay.classList.remove('active'); }
+        function openMenu() { sideMenu.classList.add('open'); overlay.classList.add('active'); }
+        hamburger.addEventListener('click', () => { if (sideMenu.classList.contains('open')) closeMenu(); else openMenu(); });
+        overlay.addEventListener('click', closeMenu);
+
+        async function loadGallery() {
+            const res = await fetch('/api/galerie-images');
+            const images = await res.json();
+            const galleryDiv = document.getElementById('gallery');
+            galleryDiv.innerHTML = images.map(img => `
+                <div class="gallery-item">
+                    <img src="${img.image_path}" alt="photo">
+                    <p>${img.description || ''}</p>
+                    <small>${img.user_nom}</small>
+                </div>
+            `).join('');
+        }
+        document.getElementById('uploadBtn').onclick = async () => {
+            const file = document.getElementById('imageUpload').files[0];
+            if (!file) return alert("Choisissez une image");
+            const description = document.getElementById('desc').value;
+            const formData = new FormData();
+            formData.append('image', file);
+            formData.append('userId', 1);
+            formData.append('description', description);
+            await fetch('/api/upload-galerie', { method: 'POST', body: formData });
+            loadGallery();
+            document.getElementById('desc').value = '';
+        };
         loadGallery();
     </script>
 </body>
