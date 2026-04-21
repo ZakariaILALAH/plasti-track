@@ -1,48 +1,160 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
+    <meta charset="UTF-8">
     <title>Inscription - PLASTI'TRACK</title>
     <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .register-container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.08);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            padding: 40px 30px;
+            border: 1px solid rgba(255,193,7,0.3);
+        }
+        .register-container h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #FFC107;
+        }
+        .register-container input, .register-container select {
+            width: 100%;
+            padding: 12px 15px;
+            margin-bottom: 20px;
+            border-radius: 40px;
+            border: none;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            font-size: 1rem;
+        }
+        .register-container select option {
+            background: #0a1f18;
+        }
+        .register-container button {
+            width: 100%;
+            background: #FFC107;
+            color: #0a1f18;
+            padding: 12px;
+            border: none;
+            border-radius: 40px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .register-container button:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 15px rgba(255,193,7,0.5);
+        }
+        .register-container p {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .register-container a {
+            color: #FFC107;
+            text-decoration: none;
+        }
+        .error-message {
+            color: #ff6b6b;
+            text-align: center;
+            margin-top: 10px;
+        }
+    </style>
 </head>
 <body>
-    <div class="container" style="max-width: 500px; margin-top: 80px;">
-        <h2>Inscription</h2>
-        <form id="registerForm">
-            <input type="text" id="nom" placeholder="Nom complet" required>
-            <input type="email" id="email" placeholder="Email" required>
-            <input type="password" id="password" placeholder="Mot de passe" required>
-            <select id="role">
-                <option value="citoyen">Citoyen</option>
-                <option value="collecteur">Collecteur</option>
-                <option value="operateur">Opérateur</option>
-            </select>
-            <input type="tel" id="telephone" placeholder="Téléphone">
-            <button type="submit">S'inscrire</button>
-        </form>
-        <p>Déjà inscrit ? <a href="/login">Se connecter</a></p>
-        <div id="message"></div>
+    <div class="animated-bg"></div>
+    <div class="particles" id="particles"></div>
+
+    <header class="main-header">
+        <div class="header-container">
+            <button class="hamburger" id="hamburgerBtn"><i class="fas fa-bars"></i></button>
+            <a href="/" class="logo-title"><i class="fas fa-recycle"></i> PLASTI'TRACK</a>
+            <div class="auth-buttons">
+                <a href="/login" class="auth-btn"><i class="fas fa-sign-in-alt"></i> Connexion</a>
+                <a href="/register" class="auth-btn register-btn"><i class="fas fa-user-plus"></i> Inscription</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="side-menu" id="sideMenu">
+        <div class="menu-items">
+            <a href="/" class="menu-item"><i class="fas fa-home"></i> Accueil</a>
+            <a href="/objectifs" class="menu-item"><i class="fas fa-bullseye"></i> Objectifs</a>
+            <a href="/fonctionnalites" class="menu-item"><i class="fas fa-cogs"></i> Fonctionnalités</a>
+            <a href="/impact" class="menu-item"><i class="fas fa-chart-line"></i> Impact</a>
+            <a href="/carte" class="menu-item"><i class="fas fa-map-marked-alt"></i> Carte</a>
+            <a href="/dashboard" class="menu-item"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+            <a href="/galerie" class="menu-item"><i class="fas fa-images"></i> Galerie</a>
+            <a href="/contact" class="menu-item"><i class="fas fa-envelope"></i> Contact</a>
+        </div>
     </div>
+    <div class="menu-overlay" id="menuOverlay"></div>
+
+    <main class="main-content">
+        <div class="register-container">
+            <h2><i class="fas fa-user-plus"></i> Inscription</h2>
+            <form id="registerForm">
+                <input type="text" id="nom" placeholder="Nom complet" required>
+                <input type="email" id="email" placeholder="Email" required>
+                <input type="password" id="password" placeholder="Mot de passe" required>
+                <input type="tel" id="telephone" placeholder="Téléphone (optionnel)">
+                <select id="role">
+                    <option value="citoyen">Citoyen</option>
+                    <option value="collecteur">Collecteur</option>
+                </select>
+                <button type="submit">Créer mon compte</button>
+            </form>
+            <p>Déjà inscrit ? <a href="/login">Se connecter</a></p>
+            <div id="message" class="error-message"></div>
+        </div>
+    </main>
+
     <script>
+        function createParticles() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 60; i++) {
+                const p = document.createElement('div');
+                p.classList.add('particle');
+                const size = Math.random() * 6 + 2;
+                p.style.width = `${size}px`;
+                p.style.height = `${size}px`;
+                p.style.left = `${Math.random() * 100}%`;
+                p.style.animationDuration = `${Math.random() * 10 + 8}s`;
+                p.style.animationDelay = `${Math.random() * 5}s`;
+                p.style.background = `rgba(255, 193, 7, ${Math.random() * 0.5})`;
+                container.appendChild(p);
+            }
+        }
+        createParticles();
+
+        const hamburger = document.getElementById('hamburgerBtn');
+        const sideMenu = document.getElementById('sideMenu');
+        const overlay = document.getElementById('menuOverlay');
+        function closeMenu() { sideMenu.classList.remove('open'); overlay.classList.remove('active'); }
+        function openMenu() { sideMenu.classList.add('open'); overlay.classList.add('active'); }
+        hamburger.addEventListener('click', () => { if (sideMenu.classList.contains('open')) closeMenu(); else openMenu(); });
+        overlay.addEventListener('click', closeMenu);
+
         document.getElementById('registerForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const data = {
-                nom: document.getElementById('nom').value,
-                email: document.getElementById('email').value,
-                password: document.getElementById('password').value,
-                role: document.getElementById('role').value,
-                telephone: document.getElementById('telephone').value
-            };
+            const nom = document.getElementById('nom').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const telephone = document.getElementById('telephone').value;
+            const role = document.getElementById('role').value;
             const res = await fetch('/api/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
+                body: JSON.stringify({ nom, email, password, telephone, role })
             });
-            const result = await res.json();
-            if (result.success) {
-                alert("Inscription réussie ! Vous pouvez vous connecter.");
+            const data = await res.json();
+            if (data.success) {
                 window.location.href = '/login';
             } else {
-                document.getElementById('message').innerText = result.error;
+                document.getElementById('message').innerText = 'Erreur : ' + (data.error || 'Email déjà utilisé');
             }
         });
     </script>
