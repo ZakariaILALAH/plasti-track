@@ -1,4 +1,4 @@
-/* Reset & base */
+/* ---------- RESET & VARIABLES ---------- */
 * {
     margin: 0;
     padding: 0;
@@ -6,16 +6,16 @@
 }
 
 body {
-    font-family: 'Poppins', 'Segoe UI', sans-serif;
+    font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: #0a1f18;
     color: #e0f2e9;
+    line-height: 1.5;
     overflow-x: hidden;
 }
 
-/* Importation police */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap');
 
-/* Fond animé (dégradé) */
+/* ---------- FOND ANIMÉ ---------- */
 .animated-bg {
     position: fixed;
     top: 0;
@@ -34,7 +34,7 @@ body {
     100% { background-position: 0% 50%; }
 }
 
-/* Particules */
+/* Particules flottantes */
 .particles {
     position: fixed;
     top: 0;
@@ -59,7 +59,7 @@ body {
     100% { transform: translateY(-20vh) rotate(360deg); opacity: 0; }
 }
 
-/* En-tête principal */
+/* ---------- EN-TÊTE FIXE ---------- */
 .main-header {
     position: fixed;
     top: 0;
@@ -80,7 +80,6 @@ body {
     margin: 0 auto;
 }
 
-/* Menu hamburger à gauche */
 .hamburger {
     font-size: 1.8rem;
     background: none;
@@ -96,7 +95,6 @@ body {
     transform: scale(1.1);
 }
 
-/* Titre au centre */
 .logo-title {
     font-size: 1.4rem;
     font-weight: bold;
@@ -104,16 +102,17 @@ body {
     text-decoration: none;
     letter-spacing: 1px;
 }
+
 .logo-title i {
     color: #FFC107;
     margin-right: 5px;
 }
 
-/* Boutons Connexion/Inscription à droite */
 .auth-buttons {
     display: flex;
     gap: 12px;
 }
+
 .auth-btn {
     padding: 6px 18px;
     border-radius: 40px;
@@ -123,19 +122,22 @@ body {
     background: rgba(255,255,255,0.1);
     color: white;
     border: 1px solid rgba(255,255,255,0.3);
+    font-size: 0.9rem;
 }
+
 .auth-btn:hover {
     background: #FFC107;
     color: #0a1f18;
     border-color: #FFC107;
     transform: scale(1.02);
 }
+
 .register-btn {
     background: #FFC107;
     color: #0a1f18;
 }
 
-/* Menu latéral (overlay) */
+/* ---------- MENU LATÉRAL (OVERLAY) ---------- */
 .side-menu {
     position: fixed;
     top: 0;
@@ -193,7 +195,6 @@ body {
     color: #FFC107;
 }
 
-/* Overlay pour fermer le menu en cliquant à côté */
 .menu-overlay {
     position: fixed;
     top: 0;
@@ -209,7 +210,7 @@ body {
     display: block;
 }
 
-/* Contenu principal (décalé à cause du header fixe) */
+/* ---------- CONTENU PRINCIPAL ---------- */
 .main-content {
     padding-top: 80px;
     min-height: 100vh;
@@ -219,136 +220,394 @@ body {
     padding-right: 20px;
 }
 
-/* Responsive : petits écrans */
-@media (max-width: 600px) {
-    .logo-title span {
-        display: none;
-    }
-    .auth-btn {
-        padding: 4px 12px;
-        font-size: 0.8rem;
-    }
-    .main-content {
-        padding-top: 70px;
-    }
-}
-
-/* Styles réutilisables pour cartes, etc. (à conserver) */
 .page-title {
-    font-size: 2.2rem;
+    font-size: 2.5rem;
     text-align: center;
-    margin: 20px 0;
+    margin-bottom: 20px;
     background: linear-gradient(135deg, #FFC107, #00A859);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
 }
+
 .subtitle {
     text-align: center;
     margin-bottom: 40px;
+    font-size: 1.2rem;
     opacity: 0.9;
 }
-.cards-grid, .features-list, .stats-cards {
+
+/* Cartes communes */
+.cards-grid {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 25px;
+    gap: 30px;
+    margin: 40px 0;
 }
-.card, .feature-item, .stat-card {
+
+.card {
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(8px);
+    border-radius: 25px;
+    padding: 30px 25px;
+    width: 280px;
+    text-align: center;
+    transition: all 0.4s;
+    border: 1px solid rgba(255,193,7,0.3);
+}
+
+.card:hover {
+    transform: translateY(-10px);
+    border-color: #FFC107;
+    background: rgba(255,193,7,0.1);
+}
+
+.card i {
+    font-size: 2.5rem;
+    color: #FFC107;
+    margin-bottom: 15px;
+}
+
+/* Liste fonctionnalités */
+.features-list {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.feature-item {
+    display: flex;
+    gap: 20px;
     background: rgba(255,255,255,0.08);
     backdrop-filter: blur(8px);
     border-radius: 25px;
     padding: 25px;
-    width: 280px;
+    margin-bottom: 20px;
+    align-items: center;
+    flex-wrap: wrap;
+    border: 1px solid rgba(255,193,7,0.3);
+    transition: 0.3s;
+}
+
+.feature-item:hover {
+    transform: translateX(10px);
+    border-color: #FFC107;
+    background: rgba(255,193,7,0.1);
+}
+
+.feature-item i {
+    font-size: 2rem;
+    color: #FFC107;
+    min-width: 60px;
+    text-align: center;
+}
+
+.feature-text h3 {
+    margin-bottom: 8px;
+}
+
+/* Section impact */
+.stats-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 30px;
+    margin: 40px 0;
+}
+
+.stat-item {
+    background: rgba(0,0,0,0.4);
+    backdrop-filter: blur(8px);
+    border-radius: 25px;
+    padding: 30px;
+    min-width: 180px;
+    text-align: center;
     transition: 0.3s;
     border: 1px solid rgba(255,193,7,0.3);
 }
-.card:hover, .feature-item:hover, .stat-card:hover {
-    transform: translateY(-8px);
+
+.stat-item:hover {
+    transform: translateY(-5px);
     border-color: #FFC107;
 }
 
-/* Améliorations pour mobile */
-@media (max-width: 768px) {
-  /* Header plus compact */
-  .main-header {
-    padding: 8px 15px;
-  }
-  .hamburger {
-    font-size: 1.5rem;
-    width: 35px;
-  }
-  .logo-title {
-    font-size: 1rem;
-  }
-  .logo-title span {
-    display: inline; /* ou none selon votre choix */
-  }
-  .auth-buttons {
-    gap: 8px;
-  }
-  .auth-btn {
-    padding: 4px 10px;
-    font-size: 0.7rem;
-  }
- 
-  /* Menu latéral prend presque toute la largeur */
-  .side-menu {
-    width: 260px;
-    left: -260px;
-  }
- 
-  /* Contenu principal avec padding réduit */
-  .main-content {
-    padding-top: 70px;
-    padding-left: 15px;
-    padding-right: 15px;
-  }
- 
-  /* Titres plus petits */
-  .page-title {
-    font-size: 1.6rem;
-    margin: 15px 0;
-  }
- 
-  /* Cartes en colonne sur mobile */
-  .cards-grid, .features-home, .stats-grid, .testimonials {
-    flex-direction: column;
-    align-items: center;
-  }
-  .card, .feature-item, .stat-item, .testimonial-card {
-    width: 90%;
-    max-width: 320px;
+.stat-item i {
+    font-size: 2.5rem;
+    color: #FFC107;
     margin-bottom: 15px;
-  }
- 
-  /* Ajustements pour la carte Leaflet */
-  #map {
-    height: 350px;
-  }
- 
-  /* Ajustements pour le dashboard */
-  .stats-cards {
-    flex-direction: column;
-    align-items: center;
-  }
-  .stat-card {
-    width: 90%;
-  }
- 
-  /* Galerie : deux colonnes sur mobile */
-  .gallery-grid {
-    gap: 15px;
-  }
-  .gallery-item {
-    width: calc(50% - 15px);
-    min-width: 140px;
-  }
- 
-  /* Formulaires */
-  .login-container, .register-container, .contact-form {
-    width: 95%;
-    padding: 25px 20px;
-  }
 }
-/* etc. Vous pouvez garder vos styles spécifiques des pages */
+
+.stat-item h3 {
+    font-size: 2.2rem;
+    font-weight: 800;
+}
+
+/* Témoignages */
+.testimonials {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 30px;
+    margin-top: 50px;
+}
+
+.testimonial-card {
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(8px);
+    border-radius: 25px;
+    padding: 25px;
+    max-width: 300px;
+    text-align: center;
+    border: 1px solid rgba(255,193,7,0.3);
+}
+
+.testimonial-card i {
+    font-size: 2.5rem;
+    color: #FFC107;
+    margin-bottom: 15px;
+}
+
+/* Dashboard */
+.stats-cards {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    margin: 30px 0;
+}
+
+.stat-card {
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(8px);
+    border-radius: 20px;
+    padding: 20px;
+    min-width: 160px;
+    text-align: center;
+    transition: 0.3s;
+    border: 1px solid rgba(255,193,7,0.3);
+}
+
+.stat-card i {
+    font-size: 2rem;
+    color: #FFC107;
+}
+
+.stat-card .number {
+    font-size: 2rem;
+    font-weight: 800;
+}
+
+canvas {
+    max-width: 600px;
+    margin: 30px auto;
+    background: rgba(255,255,255,0.05);
+    border-radius: 20px;
+    padding: 15px;
+}
+
+/* Galerie */
+.upload-area {
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(8px);
+    border-radius: 25px;
+    padding: 25px;
+    margin-bottom: 40px;
+    text-align: center;
+    border: 1px dashed rgba(255,193,7,0.5);
+}
+
+.upload-area input, .upload-area textarea {
+    margin: 10px 0;
+    padding: 10px;
+    width: 80%;
+    border-radius: 30px;
+    border: none;
+    background: rgba(255,255,255,0.2);
+    color: white;
+}
+
+.upload-area button {
+    background: #FFC107;
+    color: #0a1f18;
+    padding: 10px 25px;
+    border: none;
+    border-radius: 40px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.gallery-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 25px;
+    justify-content: center;
+}
+
+.gallery-item {
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(8px);
+    border-radius: 20px;
+    overflow: hidden;
+    width: 260px;
+    text-align: center;
+    padding: 15px;
+    transition: 0.3s;
+    border: 1px solid rgba(255,193,7,0.3);
+}
+
+.gallery-item img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 15px;
+}
+
+/* Formulaires (login, register, contact) */
+.login-container, .register-container, .contact-form {
+    max-width: 500px;
+    margin: 0 auto;
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(10px);
+    border-radius: 30px;
+    padding: 40px 30px;
+    border: 1px solid rgba(255,193,7,0.3);
+}
+
+.login-container input, .register-container input, .register-container select, .contact-form input, .contact-form textarea {
+    width: 100%;
+    padding: 12px 15px;
+    margin-bottom: 20px;
+    border-radius: 40px;
+    border: none;
+    background: rgba(255,255,255,0.2);
+    color: white;
+    font-size: 1rem;
+}
+
+.login-container button, .register-container button, .contact-form button {
+    width: 100%;
+    background: #FFC107;
+    color: #0a1f18;
+    padding: 12px;
+    border: none;
+    border-radius: 40px;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.error-message {
+    color: #ff6b6b;
+    text-align: center;
+    margin-top: 10px;
+}
+
+/* Carte Leaflet */
+#map {
+    height: 500px;
+    border-radius: 25px;
+    margin: 20px 0;
+    border: 2px solid rgba(255,193,7,0.3);
+    z-index: 1;
+}
+
+.btn-localize {
+    background: #FFC107;
+    color: #0a1f18;
+    padding: 10px 25px;
+    border: none;
+    border-radius: 40px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+    margin-bottom: 20px;
+}
+
+/* Pied de page */
+footer {
+    margin-top: 80px;
+    text-align: center;
+    padding: 30px 20px;
+    border-top: 1px solid rgba(255,193,7,0.2);
+    font-size: 0.9rem;
+}
+
+/* ---------- RESPONSIVE (MOBILE) ---------- */
+@media (max-width: 768px) {
+    .main-header {
+        padding: 8px 15px;
+    }
+    .hamburger {
+        font-size: 1.5rem;
+        width: 35px;
+    }
+    .logo-title {
+        font-size: 1rem;
+    }
+    .logo-title span {
+        display: none;
+    }
+    .auth-buttons {
+        gap: 6px;
+    }
+    .auth-btn {
+        padding: 4px 10px;
+        font-size: 0.7rem;
+    }
+
+    .main-content {
+        padding-top: 70px;
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+
+    .page-title {
+        font-size: 1.8rem;
+    }
+
+    .cards-grid, .stats-grid, .testimonials, .stats-cards {
+        gap: 20px;
+    }
+    .card, .stat-item, .testimonial-card, .stat-card {
+        width: 100%;
+        max-width: 300px;
+    }
+
+    .feature-item {
+        flex-direction: column;
+        text-align: center;
+    }
+    .feature-item i {
+        margin-bottom: 10px;
+    }
+
+    .side-menu {
+        width: 260px;
+        left: -260px;
+    }
+
+    #map {
+        height: 350px;
+    }
+
+    .gallery-item {
+        width: calc(50% - 15px);
+        min-width: 140px;
+    }
+}
+
+@media (max-width: 480px) {
+    .page-title {
+        font-size: 1.5rem;
+    }
+    .card i {
+        font-size: 2rem;
+    }
+    .stat-item h3 {
+        font-size: 1.5rem;
+    }
+    .gallery-item {
+        width: 100%;
+    }
+}
