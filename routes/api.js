@@ -73,7 +73,7 @@ router.post('/depot', (req, res) => {
   const { point_id, poids_kg } = req.body;
   if (!point_id || !poids_kg || poids_kg <= 0) {
     return res.status(400).json({ error: "Données invalides" });
-  }
+  };
   const points = poids_kg * 10;
   const stmt = db.prepare(`INSERT INTO depots (user_id, point_id, poids_kg, points_credites) VALUES (?, ?, ?, ?)`);
   stmt.run(user_id, point_id, poids_kg, points);
@@ -105,7 +105,7 @@ router.post('/validate-scan', (req, res) => {
   db.prepare(`UPDATE qr_codes SET actif = 0 WHERE code = ?`).run(code);
   res.json({ success: true, points });
 });
-});
+
 
 router.post('/upload-galerie', upload.single('image'), (req, res) => {
   const { userId, description } = req.body;
