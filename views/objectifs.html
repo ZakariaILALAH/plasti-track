@@ -2,15 +2,10 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Objectifs - PLASTI'TRACK</title>
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <style>
-        .cards-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 25px; margin-top: 30px; }
-        .card { background: rgba(255,255,255,0.08); backdrop-filter: blur(8px); border-radius: 25px; padding: 25px; width: 260px; text-align: center; transition: 0.3s; border: 1px solid rgba(255,193,7,0.3); }
-        .card:hover { transform: translateY(-8px); border-color: #FFC107; background: rgba(255,193,7,0.1); }
-        .card i { font-size: 2.5rem; color: #FFC107; margin-bottom: 15px; }
-    </style>
 </head>
 <body>
     <div class="animated-bg"></div>
@@ -19,7 +14,7 @@
     <header class="main-header">
         <div class="header-container">
             <button class="hamburger" id="hamburgerBtn"><i class="fas fa-bars"></i></button>
-            <a href="/" class="logo-title"><i class="fas fa-recycle"></i> PLASTI'TRACK</a>
+            <a href="/" class="logo-title"><i class="fas fa-recycle"></i><span> PLASTI'TRACK</span></a>
             <div class="auth-buttons">
                 <a href="/login" class="auth-btn"><i class="fas fa-sign-in-alt"></i> Connexion</a>
                 <a href="/register" class="auth-btn register-btn"><i class="fas fa-user-plus"></i> Inscription</a>
@@ -52,7 +47,12 @@
         </div>
     </main>
 
+    <footer>
+        <p>© 2025 PLASTI'TRACK - Incubé par CIPMEN - Lauréat UNICEF Hackathon Zéro Plastique</p>
+    </footer>
+
     <script>
+        // Génération des particules
         function createParticles() {
             const container = document.getElementById('particles');
             for (let i = 0; i < 60; i++) {
@@ -70,6 +70,7 @@
         }
         createParticles();
 
+        // Menu hamburger
         const hamburger = document.getElementById('hamburgerBtn');
         const sideMenu = document.getElementById('sideMenu');
         const overlay = document.getElementById('menuOverlay');
@@ -77,6 +78,7 @@
         function openMenu() { sideMenu.classList.add('open'); overlay.classList.add('active'); }
         hamburger.addEventListener('click', () => { if (sideMenu.classList.contains('open')) closeMenu(); else openMenu(); });
         overlay.addEventListener('click', closeMenu);
+        document.querySelectorAll('.menu-item').forEach(link => link.addEventListener('click', closeMenu));
     </script>
 </body>
 </html>
