@@ -15,10 +15,14 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Session
 app.use(session({
-  secret: 'un secret fort pour plastitrack',
+  secret: 'un-secret-fort-pour-plastitrack',
   resave: false,
   saveUninitialized: false,
-  cookie: { secure: false }  // passer à true si HTTPS
+  cookie: {
+    secure: process.env.NODE_ENV === 'production', // true en production (HTTPS)
+    httpOnly: true,
+    sameSite: 'lax'
+  }
 }));
 
 // Routes API
