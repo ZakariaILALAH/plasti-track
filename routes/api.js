@@ -68,12 +68,18 @@ router.get('/points', (req, res) => {
 });
 
 router.post('/depot', (req, res) => {
-  const { user_id, point_id, poids_kg } = req.body;
+  if (!req.session.userId) return res.status(401).json({ error: "Vous devez être connecté" });
+  const user_id = req.session.userId;
+  const { point_id, poids_kg } = req.body;
+  if (!point_id || !poids_kg || poids_kg <= 0) {
+    return res.status(400).json({ error: "Données invalides" });
+  }
   const points = poids_kg * 10;
   const stmt = db.prepare(`INSERT INTO depots (user_id, point_id, poids_kg, points_credites) VALUES (?, ?, ?, ?)`);
   stmt.run(user_id, point_id, poids_kg, points);
   db.prepare(`UPDATE users SET points = points + ? WHERE id = ?`).run(points, user_id);
   res.json({ success: true, points_gagnes: points });
+});
 });
 
 router.get('/generate-qr/:pointId', async (req, res) => {
