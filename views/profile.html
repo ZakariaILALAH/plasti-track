@@ -158,15 +158,13 @@
 
                 const html = `
                     <div class="profile-container">
-                        <div class="profile-card">
-                            <h3><i class="fas fa-user-circle"></i> Mes informations</h3>
-                            <div class="profile-info">
-                                <p><strong>Nom :</strong> ${user.nom}</p>
-                                <p><strong>Email :</strong> ${user.email}</p>
-                                <p><strong>Téléphone :</strong> ${user.telephone || 'Non renseigné'}</p>
-                                <p><strong>Rôle :</strong> ${user.role === 'collecteur' ? 'Collecteur' : 'Citoyen'}</p>
-                                <p><strong>Membre depuis :</strong> ${new Date(user.created_at).toLocaleDateString('fr-FR')}</p>
-                            </div>
+                        <div style="text-align:center; margin:20px 0;">
+                        <span class="points-badge"><i class="fas fa-star"></i> ${user.points} points</span>
+                        <br><br>
+                        <a href="/carte" class="btn-localize" style="display:inline-block; text-decoration:none; background:#FFC107; color:#0a1f18; padding:8px 20px; border-radius:40px; font-weight:bold;">
+                        <i class="fas fa-map-marked-alt"></i> Aller à la carte
+                        </a>
+                     </div>
                             <div style="text-align:center; margin:20px 0;">
                                 <span class="points-badge"><i class="fas fa-star"></i> ${user.points} points</span>
                             </div>
