@@ -42,7 +42,7 @@
         <h1 class="page-title">Points de collecte</h1>
         <div id="map"></div>
         <button id="maPosition" class="btn-localize"><i class="fas fa-location-dot"></i> Me localiser</button>
-        <p><i class="fas fa-info-circle"></i> Cliquez sur un marqueur pour signaler un dépôt (connectez-vous d'abord).</p>
+        <p><i class="fas fa-info-circle"></i> Cliquez sur un marqueur pour signaler un dépôt (vous devez être connecté).</p>
     </main>
 
     <footer>
@@ -50,6 +50,124 @@
     </footer>
 
     <script>
+        // Menu hamburger
+        const hamburger = document.getElementById('hamburgerBtn');
+        const sideMenu = document.getElementById('sideMenu');
+        const overlay = document.getElementById('menuOverlay');
+        function closeMenu() { sideMenu.classList.remove('open'); overlay.classList.remove('active'); }
+        function openMenu() { sideMenu.classList.add('open'); overlay.classList.add('active'); }
+        hamburger.addEventListener('click', () => { if (sideMenu.classList.contains('open')) closeMenu(); else openMenu(); });
+        overlay.addEventListener('click', closeMenu);
+        document.querySelectorAll('.menu-item').forEach(link => link.addEventListener('click', closeMenu));
+
+        // Vérifier l'état de connexion
+        let isLoggedIn = false;
+        let currentUser = null;
+
+        fetch('/api/me', { credentials: 'include' })
+            .then(res => {
+                if (res.status === 200) {
+                    isLoggedIn = true;
+                    return res.json();
+                } else {
+                    throw new Error('Non connecté');
+                }
+            })
+            .then(user => {
+                currentUser = user;
+                console.log('Connecté :', user.nom);
+            })
+            .catch(() => {
+                isLoggedIn = false;
+                console.log('Non connecté');
+            })
+            .finally(() => {
+                initialiserCarte();
+            });
+
+        function initialiserCarte() {
+            const map = L.map('map').setView([13.5121, 2.1126], 13);
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>'
+            }).addTo(map);
+
+            fetch('/api/points')
+                .then(res => res.json())
+                .then(points => {
+                    points.forEach(p => {
+                        let popupHtml = `<b>${p.nom}</b><br>${p.adresse || ''}<br>`;
+                        if (isLoggedIn) {
+                            popupHtml += `<button class="depot-btn" data-id="${p.id}" style="background:#FFC107; color:#0a1f18; border:none; padding:5px 12px; border-radius:20px; margin-top:5px; cursor:pointer;">🗑️ Déposer ici</button>`;
+                        } else {
+                            popupHtml += `<a href="/login" style="background:#FFC107; color:#0a1f18; padding:5px 12px; border-radius:20px; text-decoration:none; display:inline-block; margin-top:5px;">🔒 Connectez-vous</a>`;
+                        }
+                        const marker = L.marker([p.latitude, p.longitude]).addTo(map);
+                        marker.bindPopup(popupHtml);
+                        // On doit attacher l'événement après ouverture de la popup
+                        marker.on('popupopen', () => {
+                            const btn = document.querySelector(`.depot-btn[data-id="${p.id}"]`);
+                            if (btn) {
+                                btn.onclick = () => signalerDepot(p.id);
+                            }
+                        });
+                    });
+                })
+                .catch(err => console.error('Erreur chargement points', err));
+
+            // Géolocalisation
+            document.getElementById('maPosition').addEventListener('click', () => {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                        pos => {
+                            map.setView([pos.coords.latitude, pos.coords.longitude], 15);
+                            L.marker([pos.coords.latitude, pos.coords.longitude]).addTo(map).bindPopup("Vous êtes ici").openPopup();
+                        },
+                        () => alert("Géolocalisation refusée")
+                    );
+                } else {
+                    alert("Votre navigateur ne supporte pas la géolocalisation.");
+                }
+            });
+        }
+
+        // Fonction de dépôt
+        window.signalerDepot = async function(pointId) {
+            if (!isLoggedIn) {
+                alert("Veuillez vous connecter pour effectuer un dépôt.");
+                window.location.href = '/login';
+                return;
+            }
+            const poids = prompt("Entrez le poids en kg :");
+            if (!poids || isNaN(poids) || parseFloat(poids) <= 0) {
+                alert("Poids invalide. Entrez un nombre positif.");
+                return;
+            }
+            try {
+                const response = await fetch('/api/depot', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ point_id: pointId, poids_kg: parseFloat(poids) })
+                });
+                const data = await response.json();
+                if (response.status === 401) {
+                    alert("Session expirée. Veuillez vous reconnecter.");
+                    window.location.href = '/login';
+                    return;
+                }
+                if (data.success) {
+                    alert(`✅ Dépôt enregistré ! +${data.points_gagnes} points.`);
+                    // Recharger la page ou mettre à jour l'affichage des points
+                } else {
+                    alert("Erreur : " + (data.error || "Inconnue"));
+                }
+            } catch (err) {
+                console.error(err);
+                alert("Erreur réseau. Vérifiez votre connexion.");
+            }
+        };
+
+        // Particules
         function createParticles() {
             const container = document.getElementById('particles');
             for (let i = 0; i < 60; i++) {
@@ -66,89 +184,6 @@
             }
         }
         createParticles();
-
-        const hamburger = document.getElementById('hamburgerBtn');
-        const sideMenu = document.getElementById('sideMenu');
-        const overlay = document.getElementById('menuOverlay');
-        function closeMenu() { sideMenu.classList.remove('open'); overlay.classList.remove('active'); }
-        function openMenu() { sideMenu.classList.add('open'); overlay.classList.add('active'); }
-        hamburger.addEventListener('click', () => { if (sideMenu.classList.contains('open')) closeMenu(); else openMenu(); });
-        overlay.addEventListener('click', closeMenu);
-        document.querySelectorAll('.menu-item').forEach(link => link.addEventListener('click', closeMenu));
-
-        // Initialisation de la carte
-        let map = L.map('map').setView([13.5121, 2.1126], 13);
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>'
-        }).addTo(map);
-
-        // Vérifier si l'utilisateur est connecté (pour adapter le bouton)
-        let isLoggedIn = false;
-        fetch('/api/me')
-            .then(res => {
-                if (res.status === 200) isLoggedIn = true;
-            })
-            .catch(() => isLoggedIn = false)
-            .finally(() => {
-                // Charger les points après avoir déterminé le statut de connexion
-                fetch('/api/points')
-                    .then(res => res.json())
-                    .then(points => {
-                        points.forEach(p => {
-                            let popupContent = `<b>${p.nom}</b><br>${p.adresse || ''}<br>`;
-                            if (isLoggedIn) {
-                                popupContent += `<button onclick="signalerDepot(${p.id})" style="background:#FFC107; color:#0a1f18; border:none; padding:5px 12px; border-radius:20px; margin-top:5px; cursor:pointer;">🗑️ Déposer ici</button>`;
-                            } else {
-                                popupContent += `<a href="/login" style="background:#FFC107; color:#0a1f18; padding:5px 12px; border-radius:20px; text-decoration:none; display:inline-block; margin-top:5px;">🔒 Connectez-vous</a>`;
-                            }
-                            L.marker([p.latitude, p.longitude])
-                                .addTo(map)
-                                .bindPopup(popupContent);
-                        });
-                    });
-            });
-
-        // Fonction de dépôt (utilisée uniquement quand connecté)
-        window.signalerDepot = async function(pointId) {
-            const poids = prompt("Poids en kg :");
-            if (!poids || isNaN(poids) || parseFloat(poids) <= 0) {
-                alert("Veuillez entrer un poids valide (ex: 2.5)");
-                return;
-            }
-            try {
-                const res = await fetch('/api/depot', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ point_id: pointId, poids_kg: parseFloat(poids) })
-                });
-                const data = await res.json();
-                if (res.status === 401) {
-                    alert("Vous devez être connecté pour effectuer un dépôt.");
-                    window.location.href = '/login';
-                } else if (data.success) {
-                    alert(`✅ Dépôt enregistré ! +${data.points_gagnes} points.`);
-                } else {
-                    alert("Erreur : " + (data.error || "Inconnue"));
-                }
-            } catch (err) {
-                alert("Erreur réseau. Vérifiez votre connexion.");
-            }
-        };
-
-        // Géolocalisation
-        document.getElementById('maPosition').addEventListener('click', () => {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    pos => {
-                        map.setView([pos.coords.latitude, pos.coords.longitude], 15);
-                        L.marker([pos.coords.latitude, pos.coords.longitude]).addTo(map).bindPopup("Vous êtes ici").openPopup();
-                    },
-                    () => alert("Géolocalisation refusée")
-                );
-            } else {
-                alert("Votre navigateur ne supporte pas la géolocalisation.");
-            }
-        });
     </script>
 </body>
 </html>
