@@ -42,7 +42,7 @@
         <h1 class="page-title">Points de collecte</h1>
         <div id="map"></div>
         <button id="maPosition" class="btn-localize"><i class="fas fa-location-dot"></i> Me localiser</button>
-        <p><i class="fas fa-info-circle"></i> Cliquez sur un marqueur pour signaler un dépôt.</p>
+        <p><i class="fas fa-info-circle"></i> Cliquez sur un marqueur pour signaler un dépôt (connectez-vous d'abord).</p>
     </main>
 
     <footer>
@@ -76,43 +76,78 @@
         overlay.addEventListener('click', closeMenu);
         document.querySelectorAll('.menu-item').forEach(link => link.addEventListener('click', closeMenu));
 
-        // Carte Leaflet
+        // Initialisation de la carte
         let map = L.map('map').setView([13.5121, 2.1126], 13);
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>' }).addTo(map);
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>'
+        }).addTo(map);
 
-        fetch('/api/points')
-            .then(res => res.json())
-            .then(points => {
-                points.forEach(p => {
-                    L.marker([p.latitude, p.longitude])
-                        .addTo(map)
-                        .bindPopup(`<b>${p.nom}</b><br>${p.adresse || ''}<br><button onclick="signalerDepot(${p.id})" style="background:#FFC107; color:#0a1f18; border:none; padding:5px 12px; border-radius:20px; font-weight:bold; margin-top:5px;">🗑️ Déposer ici</button>`);
-                });
+        // Vérifier si l'utilisateur est connecté (pour adapter le bouton)
+        let isLoggedIn = false;
+        fetch('/api/me')
+            .then(res => {
+                if (res.status === 200) isLoggedIn = true;
+            })
+            .catch(() => isLoggedIn = false)
+            .finally(() => {
+                // Charger les points après avoir déterminé le statut de connexion
+                fetch('/api/points')
+                    .then(res => res.json())
+                    .then(points => {
+                        points.forEach(p => {
+                            let popupContent = `<b>${p.nom}</b><br>${p.adresse || ''}<br>`;
+                            if (isLoggedIn) {
+                                popupContent += `<button onclick="signalerDepot(${p.id})" style="background:#FFC107; color:#0a1f18; border:none; padding:5px 12px; border-radius:20px; margin-top:5px; cursor:pointer;">🗑️ Déposer ici</button>`;
+                            } else {
+                                popupContent += `<a href="/login" style="background:#FFC107; color:#0a1f18; padding:5px 12px; border-radius:20px; text-decoration:none; display:inline-block; margin-top:5px;">🔒 Connectez-vous</a>`;
+                            }
+                            L.marker([p.latitude, p.longitude])
+                                .addTo(map)
+                                .bindPopup(popupContent);
+                        });
+                    });
             });
 
+        // Fonction de dépôt (utilisée uniquement quand connecté)
         window.signalerDepot = async function(pointId) {
-            let poids = prompt("Poids en kg :");
-            if (!poids || isNaN(poids) || parseFloat(poids) <= 0) return alert("Poids invalide");
-            const userId = 1; // temporaire
+            const poids = prompt("Poids en kg :");
+            if (!poids || isNaN(poids) || parseFloat(poids) <= 0) {
+                alert("Veuillez entrer un poids valide (ex: 2.5)");
+                return;
+            }
             try {
                 const res = await fetch('/api/depot', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ user_id: userId, point_id: pointId, poids_kg: parseFloat(poids) })
+                    body: JSON.stringify({ point_id: pointId, poids_kg: parseFloat(poids) })
                 });
                 const data = await res.json();
-                if (data.success) alert(`✅ Dépôt enregistré ! +${data.points_gagnes} points.`);
-                else alert("Erreur lors de l'enregistrement");
-            } catch (err) { alert("Erreur réseau"); }
+                if (res.status === 401) {
+                    alert("Vous devez être connecté pour effectuer un dépôt.");
+                    window.location.href = '/login';
+                } else if (data.success) {
+                    alert(`✅ Dépôt enregistré ! +${data.points_gagnes} points.`);
+                } else {
+                    alert("Erreur : " + (data.error || "Inconnue"));
+                }
+            } catch (err) {
+                alert("Erreur réseau. Vérifiez votre connexion.");
+            }
         };
 
+        // Géolocalisation
         document.getElementById('maPosition').addEventListener('click', () => {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
-                    pos => { map.setView([pos.coords.latitude, pos.coords.longitude], 15); L.marker([pos.coords.latitude, pos.coords.longitude]).addTo(map).bindPopup("Vous êtes ici").openPopup(); },
+                    pos => {
+                        map.setView([pos.coords.latitude, pos.coords.longitude], 15);
+                        L.marker([pos.coords.latitude, pos.coords.longitude]).addTo(map).bindPopup("Vous êtes ici").openPopup();
+                    },
                     () => alert("Géolocalisation refusée")
                 );
-            } else alert("Non supporté");
+            } else {
+                alert("Votre navigateur ne supporte pas la géolocalisation.");
+            }
         });
     </script>
 </body>
