@@ -92,13 +92,20 @@ router.get('/generate-qr/:pointId', async (req, res) => {
 });
 
 router.post('/validate-scan', (req, res) => {
-  const { code, poids_kg, userIdCollecteur } = req.body;
+  if (!req.session.userId) return res.status(401).json({ error: "Non authentifié" });
+  const collecteur_id = req.session.userId;
+  const { code, poids_kg } = req.body;
   const qr = db.prepare(`SELECT * FROM qr_codes WHERE code = ? AND actif = 1`).get(code);
   if (!qr) return res.status(404).json({ error: "QR code invalide" });
   const points = poids_kg * 10;
-  db.prepare(`INSERT INTO depots (user_id, point_id, poids_kg, points_credites) VALUES (?, ?, ?, ?)`).run(userIdCollecteur, qr.point_id, poids_kg, points);
+  // Le dépôt est attribué à l'utilisateur pour lequel le QR a été généré ?
+  // Ici, on enregistre le dépôt pour le collecteur (ou pour le citoyen si le QR contient l'user_id).
+  // Pour simplifier, on attribue au collecteur, mais vous pouvez améliorer.
+  db.prepare(`INSERT INTO depots (user_id, point_id, poids_kg, points_credites) VALUES (?, ?, ?, ?)`).run(collecteur_id, qr.point_id, poids_kg, points);
+  db.prepare(`UPDATE users SET points = points + ? WHERE id = ?`).run(points, collecteur_id);
   db.prepare(`UPDATE qr_codes SET actif = 0 WHERE code = ?`).run(code);
   res.json({ success: true, points });
+});
 });
 
 router.post('/upload-galerie', upload.single('image'), (req, res) => {
