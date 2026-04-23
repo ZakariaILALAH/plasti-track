@@ -1,30 +1,135 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
-    <title>Mon QR Code - PLASTI'TRACK</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>QR Code Collecteur - PLASTI'TRACK</title>
     <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://unpkg.com/@ericblade/quagga2/dist/quagga.min.js"></script>
+    <style>
+        .qr-section { margin: 30px 0; text-align: center; }
+        #qrResult img { max-width: 200px; background: white; padding: 10px; border-radius: 20px; }
+        #preview { width: 100%; max-width: 400px; margin: 0 auto; display: block; border-radius: 20px; }
+    </style>
 </head>
 <body>
-    <div class="container" style="text-align: center;">
-        <h1>Votre QR Code collecteur</h1>
-        <p>Présentez ce code lors des collectes pour valider les dépôts.</p>
-        <div id="qrcode"></div>
-        <button onclick="window.location.href='/profil'">Mon profil</button>
-        <button onclick="fetch('/api/logout').then(()=>window.location.href='/')">Déconnexion</button>
+    <div class="animated-bg"></div>
+    <div class="particles" id="particles"></div>
+
+    <header class="main-header">
+        <div class="header-container">
+            <button class="hamburger" id="hamburgerBtn"><i class="fas fa-bars"></i></button>
+            <a href="/" class="logo-title"><i class="fas fa-recycle"></i><span> PLASTI'TRACK</span></a>
+            <div class="auth-buttons">
+                <a href="/login" class="auth-btn"><i class="fas fa-sign-in-alt"></i> Connexion</a>
+                <a href="/register" class="auth-btn register-btn"><i class="fas fa-user-plus"></i> Inscription</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="side-menu" id="sideMenu">
+        <div class="menu-items">
+            <a href="/" class="menu-item"><i class="fas fa-home"></i> Accueil</a>
+            <a href="/objectifs" class="menu-item"><i class="fas fa-bullseye"></i> Objectifs</a>
+            <a href="/fonctionnalites" class="menu-item"><i class="fas fa-cogs"></i> Fonctionnalités</a>
+            <a href="/impact" class="menu-item"><i class="fas fa-chart-line"></i> Impact</a>
+            <a href="/carte" class="menu-item"><i class="fas fa-map-marked-alt"></i> Carte</a>
+            <a href="/dashboard" class="menu-item"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+            <a href="/galerie" class="menu-item"><i class="fas fa-images"></i> Galerie</a>
+            <a href="/contact" class="menu-item"><i class="fas fa-envelope"></i> Contact</a>
+        </div>
     </div>
+    <div class="menu-overlay" id="menuOverlay"></div>
+
+    <main class="main-content">
+        <h1 class="page-title">Espace Collecteur - QR Code</h1>
+        <div class="qr-section">
+            <h3>Générer un QR code pour un point de collecte</h3>
+            <select id="pointSelect"></select>
+            <button id="generateBtn" class="btn-localize" style="margin: 10px;">Générer QR</button>
+            <div id="qrResult"></div>
+        </div>
+        <div class="qr-section">
+            <h3>Scanner un QR code (dépôt citoyen)</h3>
+            <div id="preview" style="width:100%; max-width:400px; margin:0 auto;"></div>
+            <input type="number" id="poidsKg" placeholder="Poids (kg)" style="margin-top:10px; padding:8px; border-radius:20px; border:none;">
+            <button id="scanBtn" class="btn-localize" style="margin-top:10px;">Scanner et valider</button>
+            <p id="scanResult"></p>
+        </div>
+    </main>
+
+    <footer>
+        <p>© 2025 PLASTI'TRACK - Incubé par CIPMEN - Lauréat UNICEF</p>
+    </footer>
+
     <script>
-        fetch('/api/my-qrcode')
+        function createParticles() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 60; i++) {
+                const p = document.createElement('div');
+                p.classList.add('particle');
+                const size = Math.random() * 6 + 2;
+                p.style.width = `${size}px`;
+                p.style.height = `${size}px`;
+                p.style.left = `${Math.random() * 100}%`;
+                p.style.animationDuration = `${Math.random() * 10 + 8}s`;
+                p.style.animationDelay = `${Math.random() * 5}s`;
+                p.style.background = `rgba(255, 193, 7, ${Math.random() * 0.5})`;
+                container.appendChild(p);
+            }
+        }
+        createParticles();
+
+        const hamburger = document.getElementById('hamburgerBtn');
+        const sideMenu = document.getElementById('sideMenu');
+        const overlay = document.getElementById('menuOverlay');
+        function closeMenu() { sideMenu.classList.remove('open'); overlay.classList.remove('active'); }
+        function openMenu() { sideMenu.classList.add('open'); overlay.classList.add('active'); }
+        hamburger.addEventListener('click', () => { if (sideMenu.classList.contains('open')) closeMenu(); else openMenu(); });
+        overlay.addEventListener('click', closeMenu);
+        document.querySelectorAll('.menu-item').forEach(link => link.addEventListener('click', closeMenu));
+
+        // Chargement des points de collecte pour le select
+        fetch('/api/points')
             .then(res => res.json())
-            .then(data => {
-                if (data.qrImage) {
-                    const img = document.createElement('img');
-                    img.src = data.qrImage;
-                    img.style.width = '250px';
-                    document.getElementById('qrcode').appendChild(img);
-                } else {
-                    document.getElementById('qrcode').innerText = "Erreur chargement QR code";
-                }
+            .then(points => {
+                const select = document.getElementById('pointSelect');
+                points.forEach(p => {
+                    const opt = document.createElement('option');
+                    opt.value = p.id;
+                    opt.textContent = p.nom;
+                    select.appendChild(opt);
+                });
             });
+
+        // Génération du QR code
+        document.getElementById('generateBtn').onclick = async () => {
+            const pointId = document.getElementById('pointSelect').value;
+            const res = await fetch(`/api/generate-qr/${pointId}`);
+            const data = await res.json();
+            document.getElementById('qrResult').innerHTML = `<img src="${data.qrImage}" /><br>Code: <strong>${data.code}</strong><br><small>Présentez ce QR à un citoyen ou scannez-le.</small>`;
+        };
+
+        // Initialisation du scanner Quagga
+        Quagga.init({
+            inputStream: { name: "Live", type: "LiveStream", target: document.querySelector('#preview') },
+            decoder: { readers: ["qr_reader"] }
+        }, err => { if (err) console.error(err); else Quagga.start(); });
+
+        Quagga.onDetected(async (result) => {
+            const code = result.codeResult.code;
+            const poids = document.getElementById('poidsKg').value;
+            if (!poids) { alert("Entrez le poids"); return; }
+            const res = await fetch('/api/validate-scan', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ code, poids_kg: parseFloat(poids), userIdCollecteur: null }) // userIdCollecteur sera pris via session
+            });
+            const data = await res.json();
+            document.getElementById('scanResult').innerText = data.success ? `✅ Dépôt validé ! +${data.points} points.` : "❌ QR code invalide ou expiré.";
+            if (data.success) setTimeout(() => document.getElementById('scanResult').innerText = '', 3000);
+        });
     </script>
 </body>
 </html>
