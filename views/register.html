@@ -2,67 +2,10 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Inscription - PLASTI'TRACK</title>
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <style>
-        .register-container {
-            max-width: 500px;
-            margin: 0 auto;
-            background: rgba(255,255,255,0.08);
-            backdrop-filter: blur(10px);
-            border-radius: 30px;
-            padding: 40px 30px;
-            border: 1px solid rgba(255,193,7,0.3);
-        }
-        .register-container h2 {
-            text-align: center;
-            margin-bottom: 30px;
-            color: #FFC107;
-        }
-        .register-container input, .register-container select {
-            width: 100%;
-            padding: 12px 15px;
-            margin-bottom: 20px;
-            border-radius: 40px;
-            border: none;
-            background: rgba(255,255,255,0.2);
-            color: white;
-            font-size: 1rem;
-        }
-        .register-container select option {
-            background: #0a1f18;
-        }
-        .register-container button {
-            width: 100%;
-            background: #FFC107;
-            color: #0a1f18;
-            padding: 12px;
-            border: none;
-            border-radius: 40px;
-            font-weight: bold;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        .register-container button:hover {
-            transform: scale(1.02);
-            box-shadow: 0 0 15px rgba(255,193,7,0.5);
-        }
-        .register-container p {
-            text-align: center;
-            margin-top: 20px;
-        }
-        .register-container a {
-            color: #FFC107;
-            text-decoration: none;
-        }
-        .error-message {
-            color: #ff6b6b;
-            text-align: center;
-            margin-top: 10px;
-        }
-    </style>
 </head>
 <body>
     <div class="animated-bg"></div>
@@ -71,7 +14,7 @@
     <header class="main-header">
         <div class="header-container">
             <button class="hamburger" id="hamburgerBtn"><i class="fas fa-bars"></i></button>
-            <a href="/" class="logo-title"><i class="fas fa-recycle"></i> PLASTI'TRACK</a>
+            <a href="/" class="logo-title"><i class="fas fa-recycle"></i><span> PLASTI'TRACK</span></a>
             <div class="auth-buttons">
                 <a href="/login" class="auth-btn"><i class="fas fa-sign-in-alt"></i> Connexion</a>
                 <a href="/register" class="auth-btn register-btn"><i class="fas fa-user-plus"></i> Inscription</a>
@@ -107,10 +50,14 @@
                 </select>
                 <button type="submit">Créer mon compte</button>
             </form>
-            <p>Déjà inscrit ? <a href="/login">Se connecter</a></p>
+            <p>Déjà inscrit ? <a href="/login" style="color:#FFC107;">Se connecter</a></p>
             <div id="message" class="error-message"></div>
         </div>
     </main>
+
+    <footer>
+        <p>© 2025 PLASTI'TRACK - Incubé par CIPMEN - Lauréat UNICEF</p>
+    </footer>
 
     <script>
         function createParticles() {
@@ -137,6 +84,7 @@
         function openMenu() { sideMenu.classList.add('open'); overlay.classList.add('active'); }
         hamburger.addEventListener('click', () => { if (sideMenu.classList.contains('open')) closeMenu(); else openMenu(); });
         overlay.addEventListener('click', closeMenu);
+        document.querySelectorAll('.menu-item').forEach(link => link.addEventListener('click', closeMenu));
 
         document.getElementById('registerForm').addEventListener('submit', async (e) => {
             e.preventDefault();
