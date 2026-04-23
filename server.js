@@ -13,16 +13,11 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Configuration session robuste
 app.use(session({
   secret: 'un-secret-fort-pour-plastitrack',
   resave: false,
   saveUninitialized: false,
-  cookie: {
-    secure: false,         // Force false pour HTTP local et HTTPS (Render gère)
-    httpOnly: true,
-    maxAge: 24 * 60 * 60 * 1000  // 24 heures
-  }
+  cookie: { secure: false, httpOnly: true, maxAge: 24 * 60 * 60 * 1000 }
 }));
 
 app.use('/api', apiRoutes);
@@ -41,16 +36,3 @@ app.get('/profile', authMiddleware.isAuthenticated, (req, res) => res.sendFile(p
 app.get('/qr-code', authMiddleware.isCollecteur, (req, res) => res.sendFile(path.join(__dirname, 'views', 'qr-code.html')));
 
 app.listen(PORT, () => console.log(`Serveur PLASTI'TRACK lancé sur http://localhost:${PORT}`));
-```
-
-🌐 Assurez-vous que login.html envoie bien les credentials
-
-Dans views/login.html, vérifiez que le fetch inclut credentials: 'include' :
-
-```javascript
-fetch('/api/login', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  credentials: 'include',
-  body: JSON.stringify({ email, password })
-})
