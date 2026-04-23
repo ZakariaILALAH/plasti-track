@@ -2,6 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Mon profil - PLASTI'TRACK</title>
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -33,9 +34,6 @@
             border-bottom: 1px solid rgba(255,255,255,0.1);
             padding-bottom: 8px;
         }
-        .profile-info strong {
-            color: #FFC107;
-        }
         .points-badge {
             background: #FFC107;
             color: #0a1f18;
@@ -59,14 +57,6 @@
             border-radius: 20px;
             padding: 15px;
             margin-bottom: 15px;
-            transition: 0.3s;
-        }
-        .depot-item:hover {
-            background: rgba(255,193,7,0.1);
-        }
-        .depot-date {
-            font-size: 0.8rem;
-            color: #aaa;
         }
         .logout-btn {
             background: #ff6b6b;
@@ -78,15 +68,6 @@
             font-weight: bold;
             margin-top: 20px;
             width: 100%;
-            transition: 0.3s;
-        }
-        .logout-btn:hover {
-            background: #ff5252;
-            transform: scale(1.02);
-        }
-        .loading {
-            text-align: center;
-            padding: 50px;
         }
     </style>
 </head>
@@ -97,7 +78,7 @@
     <header class="main-header">
         <div class="header-container">
             <button class="hamburger" id="hamburgerBtn"><i class="fas fa-bars"></i></button>
-            <a href="/" class="logo-title"><i class="fas fa-recycle"></i> PLASTI'TRACK</a>
+            <a href="/" class="logo-title"><i class="fas fa-recycle"></i><span> PLASTI'TRACK</span></a>
             <div class="auth-buttons">
                 <a href="/login" class="auth-btn"><i class="fas fa-sign-in-alt"></i> Connexion</a>
                 <a href="/register" class="auth-btn register-btn"><i class="fas fa-user-plus"></i> Inscription</a>
@@ -121,10 +102,12 @@
 
     <main class="main-content">
         <h1 class="page-title">Mon profil</h1>
-        <div id="profileContent" class="loading">
-            <i class="fas fa-spinner fa-pulse fa-2x"></i> Chargement...
-        </div>
+        <div id="profileContent" style="text-align:center; padding:50px;"><i class="fas fa-spinner fa-pulse fa-2x"></i> Chargement...</div>
     </main>
+
+    <footer>
+        <p>© 2025 PLASTI'TRACK - Incubé par CIPMEN - Lauréat UNICEF</p>
+    </footer>
 
     <script>
         function createParticles() {
@@ -151,8 +134,8 @@
         function openMenu() { sideMenu.classList.add('open'); overlay.classList.add('active'); }
         hamburger.addEventListener('click', () => { if (sideMenu.classList.contains('open')) closeMenu(); else openMenu(); });
         overlay.addEventListener('click', closeMenu);
+        document.querySelectorAll('.menu-item').forEach(link => link.addEventListener('click', closeMenu));
 
-        // Vérifier si l'utilisateur est connecté
         async function loadProfile() {
             try {
                 const res = await fetch('/api/me');
@@ -161,7 +144,6 @@
                     return;
                 }
                 const user = await res.json();
-                // Récupérer les dépôts
                 const depotsRes = await fetch('/api/me/depots');
                 const depots = await depotsRes.json();
 
@@ -170,9 +152,9 @@
                         <strong>${d.point_nom}</strong><br>
                         ${d.adresse ? d.adresse + '<br>' : ''}
                         ${d.poids_kg} kg - <span class="points-badge" style="background:#FFC107; color:#0a1f18; padding:2px 10px; font-size:0.8rem;">+${d.points_credites} pts</span><br>
-                        <span class="depot-date">${new Date(d.date_depot).toLocaleDateString('fr-FR')}</span>
+                        <small>${new Date(d.date_depot).toLocaleDateString('fr-FR')}</small>
                     </div>
-                `).join('') || '<p>Aucun dépôt effectué pour le moment.</p>';
+                `).join('') || '<p>Aucun dépôt effectué.</p>';
 
                 const html = `
                     <div class="profile-container">
@@ -185,7 +167,7 @@
                                 <p><strong>Rôle :</strong> ${user.role === 'collecteur' ? 'Collecteur' : 'Citoyen'}</p>
                                 <p><strong>Membre depuis :</strong> ${new Date(user.created_at).toLocaleDateString('fr-FR')}</p>
                             </div>
-                            <div style="text-align: center; margin: 20px 0;">
+                            <div style="text-align:center; margin:20px 0;">
                                 <span class="points-badge"><i class="fas fa-star"></i> ${user.points} points</span>
                             </div>
                             <button id="logoutBtn" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Se déconnecter</button>
@@ -197,7 +179,6 @@
                     </div>
                 `;
                 document.getElementById('profileContent').innerHTML = html;
-
                 document.getElementById('logoutBtn').addEventListener('click', async () => {
                     await fetch('/api/logout');
                     window.location.href = '/';
