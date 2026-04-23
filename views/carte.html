@@ -2,16 +2,12 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Carte interactive - PLASTI'TRACK</title>
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <style>
-        #map { height: 500px; border-radius: 25px; margin: 20px 0; border: 2px solid rgba(255,193,7,0.3); }
-        .btn-localize { background: #FFC107; color: #0a1f18; padding: 10px 25px; border: none; border-radius: 40px; font-weight: bold; cursor: pointer; transition: 0.3s; margin-bottom: 20px; }
-        .btn-localize:hover { transform: scale(1.02); box-shadow: 0 0 15px rgba(255,193,7,0.5); }
-    </style>
 </head>
 <body>
     <div class="animated-bg"></div>
@@ -20,7 +16,7 @@
     <header class="main-header">
         <div class="header-container">
             <button class="hamburger" id="hamburgerBtn"><i class="fas fa-bars"></i></button>
-            <a href="/" class="logo-title"><i class="fas fa-recycle"></i> PLASTI'TRACK</a>
+            <a href="/" class="logo-title"><i class="fas fa-recycle"></i><span> PLASTI'TRACK</span></a>
             <div class="auth-buttons">
                 <a href="/login" class="auth-btn"><i class="fas fa-sign-in-alt"></i> Connexion</a>
                 <a href="/register" class="auth-btn register-btn"><i class="fas fa-user-plus"></i> Inscription</a>
@@ -48,7 +44,11 @@
         <button id="maPosition" class="btn-localize"><i class="fas fa-location-dot"></i> Me localiser</button>
         <p><i class="fas fa-info-circle"></i> Cliquez sur un marqueur pour signaler un dépôt.</p>
     </main>
-    
+
+    <footer>
+        <p>© 2025 PLASTI'TRACK - Incubé par CIPMEN - Lauréat UNICEF</p>
+    </footer>
+
     <script>
         function createParticles() {
             const container = document.getElementById('particles');
@@ -74,8 +74,9 @@
         function openMenu() { sideMenu.classList.add('open'); overlay.classList.add('active'); }
         hamburger.addEventListener('click', () => { if (sideMenu.classList.contains('open')) closeMenu(); else openMenu(); });
         overlay.addEventListener('click', closeMenu);
+        document.querySelectorAll('.menu-item').forEach(link => link.addEventListener('click', closeMenu));
 
-        // Carte
+        // Carte Leaflet
         let map = L.map('map').setView([13.5121, 2.1126], 13);
         L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>' }).addTo(map);
 
@@ -87,8 +88,7 @@
                         .addTo(map)
                         .bindPopup(`<b>${p.nom}</b><br>${p.adresse || ''}<br><button onclick="signalerDepot(${p.id})" style="background:#FFC107; color:#0a1f18; border:none; padding:5px 12px; border-radius:20px; font-weight:bold; margin-top:5px;">🗑️ Déposer ici</button>`);
                 });
-            })
-            .catch(err => console.error('Erreur chargement points:', err));
+            });
 
         window.signalerDepot = async function(pointId) {
             let poids = prompt("Poids en kg :");
