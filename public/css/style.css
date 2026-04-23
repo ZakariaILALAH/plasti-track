@@ -267,4 +267,88 @@ body {
     transform: translateY(-8px);
     border-color: #FFC107;
 }
+
+/* Améliorations pour mobile */
+@media (max-width: 768px) {
+  /* Header plus compact */
+  .main-header {
+    padding: 8px 15px;
+  }
+  .hamburger {
+    font-size: 1.5rem;
+    width: 35px;
+  }
+  .logo-title {
+    font-size: 1rem;
+  }
+  .logo-title span {
+    display: inline; /* ou none selon votre choix */
+  }
+  .auth-buttons {
+    gap: 8px;
+  }
+  .auth-btn {
+    padding: 4px 10px;
+    font-size: 0.7rem;
+  }
+ 
+  /* Menu latéral prend presque toute la largeur */
+  .side-menu {
+    width: 260px;
+    left: -260px;
+  }
+ 
+  /* Contenu principal avec padding réduit */
+  .main-content {
+    padding-top: 70px;
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+ 
+  /* Titres plus petits */
+  .page-title {
+    font-size: 1.6rem;
+    margin: 15px 0;
+  }
+ 
+  /* Cartes en colonne sur mobile */
+  .cards-grid, .features-home, .stats-grid, .testimonials {
+    flex-direction: column;
+    align-items: center;
+  }
+  .card, .feature-item, .stat-item, .testimonial-card {
+    width: 90%;
+    max-width: 320px;
+    margin-bottom: 15px;
+  }
+ 
+  /* Ajustements pour la carte Leaflet */
+  #map {
+    height: 350px;
+  }
+ 
+  /* Ajustements pour le dashboard */
+  .stats-cards {
+    flex-direction: column;
+    align-items: center;
+  }
+  .stat-card {
+    width: 90%;
+  }
+ 
+  /* Galerie : deux colonnes sur mobile */
+  .gallery-grid {
+    gap: 15px;
+  }
+  .gallery-item {
+    width: calc(50% - 15px);
+    min-width: 140px;
+  }
+ 
+  /* Formulaires */
+  .login-container, .register-container, .contact-form {
+    width: 95%;
+    padding: 25px 20px;
+  }
+}
 /* etc. Vous pouvez garder vos styles spécifiques des pages */
