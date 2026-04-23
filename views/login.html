@@ -54,6 +54,7 @@
     </footer>
 
     <script>
+        // Génération des particules
         function createParticles() {
             const container = document.getElementById('particles');
             for (let i = 0; i < 60; i++) {
@@ -71,6 +72,7 @@
         }
         createParticles();
 
+        // Menu hamburger
         const hamburger = document.getElementById('hamburgerBtn');
         const sideMenu = document.getElementById('sideMenu');
         const overlay = document.getElementById('menuOverlay');
@@ -80,20 +82,29 @@
         overlay.addEventListener('click', closeMenu);
         document.querySelectorAll('.menu-item').forEach(link => link.addEventListener('click', closeMenu));
 
+        // Formulaire de connexion
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
-            const res = await fetch('/api/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password })
-            });
-            const data = await res.json();
-            if (data.success) {
-                window.location.href = '/profile';
-            } else {
-                document.getElementById('message').innerText = 'Email ou mot de passe incorrect';
+            const messageDiv = document.getElementById('message');
+
+            try {
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ email, password })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    window.location.href = '/profile';
+                } else {
+                    messageDiv.innerText = 'Email ou mot de passe incorrect';
+                }
+            } catch (err) {
+                console.error(err);
+                messageDiv.innerText = 'Erreur de connexion. Veuillez réessayer.';
             }
         });
     </script>
