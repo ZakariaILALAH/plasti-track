@@ -80,7 +80,6 @@ router.post('/depot', (req, res) => {
   db.prepare(`UPDATE users SET points = points + ? WHERE id = ?`).run(points, user_id);
   res.json({ success: true, points_gagnes: points });
 });
-});
 
 router.get('/generate-qr/:pointId', async (req, res) => {
   const pointId = req.params.pointId;
