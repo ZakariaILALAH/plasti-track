@@ -39,7 +39,7 @@
     <div class="menu-overlay" id="menuOverlay"></div>
 
     <main class="main-content">
-        <h1 class="page-title">Points de collecte</h1>
+        <h1 class="page-title">Points de collecte à Dosso</h1>
         <div id="map"></div>
         <button id="maPosition" class="btn-localize"><i class="fas fa-location-dot"></i> Me localiser</button>
         <p><i class="fas fa-info-circle"></i> Cliquez sur un marqueur pour signaler un dépôt (vous devez être connecté).</p>
@@ -60,7 +60,6 @@
         overlay.addEventListener('click', closeMenu);
         document.querySelectorAll('.menu-item').forEach(link => link.addEventListener('click', closeMenu));
 
-        // Vérifier l'état de connexion
         let isLoggedIn = false;
         let currentUser = null;
 
@@ -69,24 +68,15 @@
                 if (res.status === 200) {
                     isLoggedIn = true;
                     return res.json();
-                } else {
-                    throw new Error('Non connecté');
-                }
+                } else throw new Error('Non connecté');
             })
-            .then(user => {
-                currentUser = user;
-                console.log('Connecté :', user.nom);
-            })
-            .catch(() => {
-                isLoggedIn = false;
-                console.log('Non connecté');
-            })
-            .finally(() => {
-                initialiserCarte();
-            });
+            .then(user => { currentUser = user; console.log('Connecté :', user.nom); })
+            .catch(() => { isLoggedIn = false; console.log('Non connecté'); })
+            .finally(() => { initialiserCarte(); });
 
         function initialiserCarte() {
-            const map = L.map('map').setView([13.5121, 2.1126], 13);
+            // Centre sur Dosso (Niger) : latitude 13.0446, longitude 3.1945
+            const map = L.map('map').setView([13.0446, 3.1945], 13);
             L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>'
             }).addTo(map);
@@ -103,18 +93,14 @@
                         }
                         const marker = L.marker([p.latitude, p.longitude]).addTo(map);
                         marker.bindPopup(popupHtml);
-                        // On doit attacher l'événement après ouverture de la popup
                         marker.on('popupopen', () => {
                             const btn = document.querySelector(`.depot-btn[data-id="${p.id}"]`);
-                            if (btn) {
-                                btn.onclick = () => signalerDepot(p.id);
-                            }
+                            if (btn) btn.onclick = () => signalerDepot(p.id);
                         });
                     });
                 })
                 .catch(err => console.error('Erreur chargement points', err));
 
-            // Géolocalisation
             document.getElementById('maPosition').addEventListener('click', () => {
                 if (navigator.geolocation) {
                     navigator.geolocation.getCurrentPosition(
@@ -124,13 +110,10 @@
                         },
                         () => alert("Géolocalisation refusée")
                     );
-                } else {
-                    alert("Votre navigateur ne supporte pas la géolocalisation.");
-                }
+                } else alert("Votre navigateur ne supporte pas la géolocalisation.");
             });
         }
 
-        // Fonction de dépôt
         window.signalerDepot = async function(pointId) {
             if (!isLoggedIn) {
                 alert("Veuillez vous connecter pour effectuer un dépôt.");
@@ -157,7 +140,7 @@
                 }
                 if (data.success) {
                     alert(`✅ Dépôt enregistré ! +${data.points_gagnes} points.`);
-                    // Recharger la page ou mettre à jour l'affichage des points
+                    // Optionnel : recharger la carte ou le profil
                 } else {
                     alert("Erreur : " + (data.error || "Inconnue"));
                 }
@@ -167,7 +150,6 @@
             }
         };
 
-        // Particules
         function createParticles() {
             const container = document.getElementById('particles');
             for (let i = 0; i < 60; i++) {
