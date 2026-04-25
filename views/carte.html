@@ -8,6 +8,14 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        #map { height: 60vh; min-height: 400px; border-radius: 20px; margin: 20px 0; border: 2px solid rgba(255,193,7,0.3); }
+        .btn-localize { background: #FFC107; color: #0a1f18; padding: 10px 25px; border: none; border-radius: 40px; font-weight: bold; cursor: pointer; margin-bottom: 20px; }
+        .btn-localize:hover { transform: scale(1.02); }
+        @media (max-width: 768px) {
+            #map { height: 50vh; min-height: 300px; }
+        }
+    </style>
 </head>
 <body>
     <div class="animated-bg"></div>
@@ -27,11 +35,6 @@
     <div class="side-menu" id="sideMenu">
         <div class="menu-items">
             <a href="/" class="menu-item"><i class="fas fa-home"></i> Accueil</a>
-            <a href="/objectifs" class="menu-item"><i class="fas fa-bullseye"></i> Objectifs</a>
-            <a href="/fonctionnalites" class="menu-item"><i class="fas fa-cogs"></i> Fonctionnalités</a>
-            <a href="/impact" class="menu-item"><i class="fas fa-chart-line"></i> Impact</a>
-            <a href="/carte" class="menu-item"><i class="fas fa-map-marked-alt"></i> Carte</a>
-            <a href="/dashboard" class="menu-item"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
             <a href="/galerie" class="menu-item"><i class="fas fa-images"></i> Galerie</a>
             <a href="/contact" class="menu-item"><i class="fas fa-envelope"></i> Contact</a>
         </div>
@@ -42,7 +45,7 @@
         <h1 class="page-title">Points de collecte à Dosso</h1>
         <div id="map"></div>
         <button id="maPosition" class="btn-localize"><i class="fas fa-location-dot"></i> Me localiser</button>
-        <p><i class="fas fa-info-circle"></i> Cliquez sur un marqueur pour signaler un dépôt (vous devez être connecté).</p>
+        <p><i class="fas fa-info-circle"></i> Cliquez sur un marqueur pour signaler un dépôt (connectez-vous d'abord).</p>
     </main>
 
     <footer>
@@ -50,106 +53,7 @@
     </footer>
 
     <script>
-        // Menu hamburger
-        const hamburger = document.getElementById('hamburgerBtn');
-        const sideMenu = document.getElementById('sideMenu');
-        const overlay = document.getElementById('menuOverlay');
-        function closeMenu() { sideMenu.classList.remove('open'); overlay.classList.remove('active'); }
-        function openMenu() { sideMenu.classList.add('open'); overlay.classList.add('active'); }
-        hamburger.addEventListener('click', () => { if (sideMenu.classList.contains('open')) closeMenu(); else openMenu(); });
-        overlay.addEventListener('click', closeMenu);
-        document.querySelectorAll('.menu-item').forEach(link => link.addEventListener('click', closeMenu));
-
-        let isLoggedIn = false;
-        let currentUser = null;
-
-        fetch('/api/me', { credentials: 'include' })
-            .then(res => {
-                if (res.status === 200) {
-                    isLoggedIn = true;
-                    return res.json();
-                } else throw new Error('Non connecté');
-            })
-            .then(user => { currentUser = user; console.log('Connecté :', user.nom); })
-            .catch(() => { isLoggedIn = false; console.log('Non connecté'); })
-            .finally(() => { initialiserCarte(); });
-
-        function initialiserCarte() {
-            // Centre sur Dosso (Niger) : latitude 13.0446, longitude 3.1945
-            const map = L.map('map').setView([13.0446, 3.1945], 13);
-            L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>'
-            }).addTo(map);
-
-            fetch('/api/points')
-                .then(res => res.json())
-                .then(points => {
-                    points.forEach(p => {
-                        let popupHtml = `<b>${p.nom}</b><br>${p.adresse || ''}<br>`;
-                        if (isLoggedIn) {
-                            popupHtml += `<button class="depot-btn" data-id="${p.id}" style="background:#FFC107; color:#0a1f18; border:none; padding:5px 12px; border-radius:20px; margin-top:5px; cursor:pointer;">🗑️ Déposer ici</button>`;
-                        } else {
-                            popupHtml += `<a href="/login" style="background:#FFC107; color:#0a1f18; padding:5px 12px; border-radius:20px; text-decoration:none; display:inline-block; margin-top:5px;">🔒 Connectez-vous</a>`;
-                        }
-                        const marker = L.marker([p.latitude, p.longitude]).addTo(map);
-                        marker.bindPopup(popupHtml);
-                        marker.on('popupopen', () => {
-                            const btn = document.querySelector(`.depot-btn[data-id="${p.id}"]`);
-                            if (btn) btn.onclick = () => signalerDepot(p.id);
-                        });
-                    });
-                })
-                .catch(err => console.error('Erreur chargement points', err));
-
-            document.getElementById('maPosition').addEventListener('click', () => {
-                if (navigator.geolocation) {
-                    navigator.geolocation.getCurrentPosition(
-                        pos => {
-                            map.setView([pos.coords.latitude, pos.coords.longitude], 15);
-                            L.marker([pos.coords.latitude, pos.coords.longitude]).addTo(map).bindPopup("Vous êtes ici").openPopup();
-                        },
-                        () => alert("Géolocalisation refusée")
-                    );
-                } else alert("Votre navigateur ne supporte pas la géolocalisation.");
-            });
-        }
-
-        window.signalerDepot = async function(pointId) {
-            if (!isLoggedIn) {
-                alert("Veuillez vous connecter pour effectuer un dépôt.");
-                window.location.href = '/login';
-                return;
-            }
-            const poids = prompt("Entrez le poids en kg :");
-            if (!poids || isNaN(poids) || parseFloat(poids) <= 0) {
-                alert("Poids invalide. Entrez un nombre positif.");
-                return;
-            }
-            try {
-                const response = await fetch('/api/depot', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    credentials: 'include',
-                    body: JSON.stringify({ point_id: pointId, poids_kg: parseFloat(poids) })
-                });
-                const data = await response.json();
-                if (response.status === 401) {
-                    alert("Session expirée. Veuillez vous reconnecter.");
-                    window.location.href = '/login';
-                    return;
-                }
-                if (data.success) {
-                    alert(`✅ Dépôt enregistré ! +${data.points_gagnes} points.`);
-                    // Optionnel : recharger la carte ou le profil
-                } else {
-                    alert("Erreur : " + (data.error || "Inconnue"));
-                }
-            } catch (err) {
-                console.error(err);
-                alert("Erreur réseau. Vérifiez votre connexion.");
-            }
-        };
-
+        // Menu, particules
         function createParticles() {
             const container = document.getElementById('particles');
             for (let i = 0; i < 60; i++) {
@@ -166,6 +70,57 @@
             }
         }
         createParticles();
+
+        const hamburger = document.getElementById('hamburgerBtn');
+        const sideMenu = document.getElementById('sideMenu');
+        const overlay = document.getElementById('menuOverlay');
+        function closeMenu() { sideMenu.classList.remove('open'); overlay.classList.remove('active'); }
+        function openMenu() { sideMenu.classList.add('open'); overlay.classList.add('active'); }
+        hamburger.onclick = () => sideMenu.classList.contains('open') ? closeMenu() : openMenu();
+        overlay.onclick = closeMenu;
+        document.querySelectorAll('.menu-item').forEach(link => link.addEventListener('click', closeMenu));
+
+        let isLoggedIn = false;
+        fetch('/api/me', { credentials: 'include' }).then(r => { if(r.ok) isLoggedIn = true; }).catch(()=>{}).finally(initMap);
+
+        function initMap() {
+            const map = L.map('map').setView([13.0446, 3.1945], 13);
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { attribution: '© OpenStreetMap' }).addTo(map);
+
+            fetch('/api/points', { credentials: 'include' })
+                .then(res => res.json())
+                .then(points => {
+                    points.forEach(p => {
+                        const btn = isLoggedIn
+                            ? `<button onclick="deposer(${p.id})" style="background:#FFC107; border:none; padding:5px 12px; border-radius:20px; cursor:pointer;">🗑️ Déposer</button>`
+                            : `<a href="/login" style="background:#FFC107; color:#0a1f18; padding:5px 12px; border-radius:20px; text-decoration:none;">🔒 Connectez-vous</a>`;
+                        L.marker([p.latitude, p.longitude]).addTo(map)
+                            .bindPopup(`<b>${p.nom}</b><br>${p.adresse||''}<br>${btn}`);
+                    });
+                })
+                .catch(err => console.error(err));
+
+            document.getElementById('maPosition').onclick = () => {
+                navigator.geolocation.getCurrentPosition(pos => map.setView([pos.coords.latitude, pos.coords.longitude], 15));
+            };
+        }
+
+        window.deposer = async function(pointId) {
+            if (!isLoggedIn) { alert("Connectez-vous d'abord"); window.location.href='/login'; return; }
+            let poids = prompt("Poids (kg) :");
+            if (!poids || isNaN(poids)) return;
+            try {
+                const res = await fetch('/api/depot', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ point_id: pointId, poids_kg: parseFloat(poids) })
+                });
+                const data = await res.json();
+                if (data.success) alert(`✅ Dépôt enregistré ! +${data.points_gagnes} points.`);
+                else alert("Erreur : " + (data.error || "Inconnue"));
+            } catch(e) { alert("Erreur réseau"); }
+        };
     </script>
 </body>
 </html>
