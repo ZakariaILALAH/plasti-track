@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Connexion - PLASTI'TRACK</title>
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -22,40 +22,12 @@
         </div>
     </header>
 
-    <div class="side-menu" id="sideMenu">
-        <div class="menu-items">
-            <a href="/" class="menu-item"><i class="fas fa-home"></i> Accueil</a>
-            <a href="/objectifs" class="menu-item"><i class="fas fa-bullseye"></i> Objectifs</a>
-            <a href="/fonctionnalites" class="menu-item"><i class="fas fa-cogs"></i> Fonctionnalités</a>
-            <a href="/impact" class="menu-item"><i class="fas fa-chart-line"></i> Impact</a>
-            <a href="/carte" class="menu-item"><i class="fas fa-map-marked-alt"></i> Carte</a>
-            <a href="/dashboard" class="menu-item"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
-            <a href="/galerie" class="menu-item"><i class="fas fa-images"></i> Galerie</a>
-            <a href="/contact" class="menu-item"><i class="fas fa-envelope"></i> Contact</a>
-        </div>
-    </div>
+    <div class="side-menu" id="sideMenu"><div class="menu-items"><!-- menu ici --></div></div>
     <div class="menu-overlay" id="menuOverlay"></div>
-
-    <!--main class="main-content">
-        <div class="login-container">
-            <h2><i class="fas fa-sign-in-alt"></i> Connexion</h2>
-            <form id="loginForm">
-                <input type="email" id="email" placeholder="Email" required>
-                <input type="password" id="password" placeholder="Mot de passe" required>
-                <button type="submit">Se connecter</button>
-            </form>
-            <p>Pas encore inscrit ? <a href="/register" style="color:#FFC107;">Créer un compte</a></p>
-            <div id="message" class="error-message"></div>
-        </div>
-    </main>
-
-
-    <!-- ... (début du fichier inchangé) ... -->
 
     <main class="main-content">
         <div class="login-container">
             <h2><i class="fas fa-sign-in-alt"></i> Connexion</h2>
-            <!-- On retire 'action' et 'method' du formulaire pour tout gérer en JavaScript -->
             <form id="loginForm">
                 <input type="email" id="email" placeholder="Email" required>
                 <input type="password" id="password" placeholder="Mot de passe" required>
@@ -66,104 +38,70 @@
         </div>
     </main>
 
-<!-- ... (reste du fichier inchangé) ... -->
+    <footer><p>© 2025 PLASTI'TRACK - Incubé par CIPMEN - Lauréat UNICEF</p></footer>
 
-
-    <footer>
-        <p>© 2025 PLASTI'TRACK - Incubé par CIPMEN - Lauréat UNICEF</p>
-    </footer>
-
-    <!--script>
-        // Génération des particules
-        function createParticles() {
-            const container = document.getElementById('particles');
-            for (let i = 0; i < 60; i++) {
-                const p = document.createElement('div');
-                p.classList.add('particle');
-                const size = Math.random() * 6 + 2;
-                p.style.width = `${size}px`;
-                p.style.height = `${size}px`;
-                p.style.left = `${Math.random() * 100}%`;
-                p.style.animationDuration = `${Math.random() * 10 + 8}s`;
-                p.style.animationDelay = `${Math.random() * 5}s`;
-                p.style.background = `rgba(255, 193, 7, ${Math.random() * 0.5})`;
-                container.appendChild(p);
+    <script>
+        (function() {
+            // Menu hamburger
+            const hamburger = document.getElementById('hamburgerBtn');
+            const sideMenu = document.getElementById('sideMenu');
+            const overlay = document.getElementById('menuOverlay');
+            if(hamburger) {
+                hamburger.onclick = () => sideMenu.classList.contains('open') ? (sideMenu.classList.remove('open'), overlay.classList.remove('active')) : (sideMenu.classList.add('open'), overlay.classList.add('active'));
+                overlay.onclick = () => { sideMenu.classList.remove('open'); overlay.classList.remove('active'); };
             }
-        }
-        createParticles();
 
-        // Menu hamburger
-        const hamburger = document.getElementById('hamburgerBtn');
-        const sideMenu = document.getElementById('sideMenu');
-        const overlay = document.getElementById('menuOverlay');
-        function closeMenu() { sideMenu.classList.remove('open'); overlay.classList.remove('active'); }
-        function openMenu() { sideMenu.classList.add('open'); overlay.classList.add('active'); }
-        hamburger.addEventListener('click', () => { if (sideMenu.classList.contains('open')) closeMenu(); else openMenu(); });
-        overlay.addEventListener('click', closeMenu);
-        document.querySelectorAll('.menu-item').forEach(link => link.addEventListener('click', closeMenu));
-
-        // Formulaire de connexion
-        document.getElementById('loginForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const messageDiv = document.getElementById('message');
-
-            try {
-                const response = await fetch('/api/login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    credentials: 'include',
-                    body: JSON.stringify({ email, password })
-                });
-                const data = await response.json();
-                if (data.success) {
-                    window.location.href = '/profile';
-                } else {
-                    messageDiv.innerText = 'Email ou mot de passe incorrect';
+            // Particules
+            function createParticles() {
+                const container = document.getElementById('particles');
+                if(!container) return;
+                for (let i = 0; i < 60; i++) {
+                    const p = document.createElement('div');
+                    p.classList.add('particle');
+                    const size = Math.random() * 6 + 2;
+                    p.style.width = `${size}px`;
+                    p.style.height = `${size}px`;
+                    p.style.left = `${Math.random() * 100}%`;
+                    p.style.animationDuration = `${Math.random() * 10 + 8}s`;
+                    p.style.animationDelay = `${Math.random() * 5}s`;
+                    p.style.background = `rgba(255, 193, 7, ${Math.random() * 0.5})`;
+                    container.appendChild(p);
                 }
-            } catch (err) {
-                console.error(err);
-                messageDiv.innerText = 'Erreur de connexion. Veuillez réessayer.';
             }
-        });
-    </script>
+            createParticles();
 
-      <script>
-        // ... (particules et code du menu inchangés) ...
+            // Connexion
+            const form = document.getElementById('loginForm');
+            if(form) {
+                form.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const email = document.getElementById('email').value;
+                    const password = document.getElementById('password').value;
+                    const msgDiv = document.getElementById('message');
 
-        // Formulaire de connexion
-        document.getElementById('loginForm').addEventListener('submit', async (e) => {
-            e.preventDefault(); // On empêche le rechargement de la page
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const messageDiv = document.getElementById('message');
-
-            try {
-                // 1. Envoyer la requête de connexion en arrière-plan
-                const response = await fetch('/api/login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    credentials: 'include', // Important pour garder la session
-                    body: JSON.stringify({ email, password })
+                    try {
+                        const res = await fetch('/api/login', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            credentials: 'include',
+                            body: JSON.stringify({ email, password })
+                        });
+                        const data = await res.json();
+                        if (data.success) {
+                            // Ouvrir le profil dans un nouvel onglet
+                            window.open('/profile', '_blank');
+                            // Revenir à l'accueil dans l'onglet courant
+                            window.location.href = '/';
+                        } else {
+                            msgDiv.innerText = data.error || 'Email ou mot de passe incorrect';
+                        }
+                    } catch (err) {
+                        console.error(err);
+                        msgDiv.innerText = 'Erreur de connexion. Vérifiez votre réseau.';
+                    }
                 });
-                const data = await response.json();
-
-                if (data.success) {
-                    // 2. Connexion réussie : ouvrir le profil dans un nouvel onglet
-                    window.open('/profile', '_blank');
-                    // 3. Recharger la page d'accueil pour refléter l'état "connecté"
-                    //    (par exemple, afficher un message de bienvenue)
-                    window.location.reload();
-                } else {
-                    messageDiv.innerText = 'Email ou mot de passe incorrect';
-                }
-            } catch (err) {
-                console.error(err);
-                messageDiv.innerText = 'Erreur de connexion. Veuillez réessayer.';
             }
-        });
+        })();
     </script>
-
 </body>
 </html>
