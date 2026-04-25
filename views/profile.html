@@ -12,11 +12,15 @@
         .profile-card h3 { color: #FFC107; margin-bottom: 20px; border-left: 4px solid #FFC107; padding-left: 15px; }
         .profile-info p { margin: 12px 0; display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; }
         .points-badge { background: #FFC107; color: #0a1f18; padding: 5px 15px; border-radius: 40px; font-weight: bold; display: inline-block; margin-top: 10px; }
-        .btn-carte { background: #FFC107; color: #0a1f18; padding: 10px 20px; border-radius: 40px; text-decoration: none; font-weight: bold; display: inline-block; margin-top: 20px; transition: 0.3s; border: none; cursor: pointer; }
-        .btn-carte:hover { transform: scale(1.02); box-shadow: 0 0 10px rgba(255,193,7,0.5); }
+        .btn-carte { background: #FFC107; color: #0a1f18; padding: 10px 20px; border-radius: 40px; text-decoration: none; font-weight: bold; display: inline-block; margin-top: 20px; transition: 0.3s; }
+        .btn-carte:hover { transform: scale(1.02); }
         .depots-list { background: rgba(255,255,255,0.08); backdrop-filter: blur(10px); border-radius: 30px; padding: 30px; flex: 1; min-width: 300px; border: 1px solid rgba(255,193,7,0.3); }
         .depot-item { background: rgba(255,255,255,0.05); border-radius: 20px; padding: 15px; margin-bottom: 15px; }
         .logout-btn { background: #ff6b6b; color: white; border: none; padding: 10px 20px; border-radius: 40px; cursor: pointer; font-weight: bold; margin-top: 20px; width: 100%; }
+        @media (max-width: 768px) {
+            .profile-card, .depots-list { width: 100%; }
+            .profile-info p { flex-direction: column; gap: 5px; }
+        }
     </style>
 </head>
 <body>
@@ -37,11 +41,6 @@
     <div class="side-menu" id="sideMenu">
         <div class="menu-items">
             <a href="/" class="menu-item"><i class="fas fa-home"></i> Accueil</a>
-            <a href="/objectifs" class="menu-item"><i class="fas fa-bullseye"></i> Objectifs</a>
-            <a href="/fonctionnalites" class="menu-item"><i class="fas fa-cogs"></i> Fonctionnalités</a>
-            <a href="/impact" class="menu-item"><i class="fas fa-chart-line"></i> Impact</a>
-            <a href="/carte" class="menu-item"><i class="fas fa-map-marked-alt"></i> Carte</a>
-            <a href="/dashboard" class="menu-item"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
             <a href="/galerie" class="menu-item"><i class="fas fa-images"></i> Galerie</a>
             <a href="/contact" class="menu-item"><i class="fas fa-envelope"></i> Contact</a>
         </div>
@@ -58,6 +57,7 @@
     </footer>
 
     <script>
+        // Menu, particules (identique à index)
         function createParticles() {
             const container = document.getElementById('particles');
             for (let i = 0; i < 60; i++) {
@@ -80,29 +80,36 @@
         const overlay = document.getElementById('menuOverlay');
         function closeMenu() { sideMenu.classList.remove('open'); overlay.classList.remove('active'); }
         function openMenu() { sideMenu.classList.add('open'); overlay.classList.add('active'); }
-        hamburger.addEventListener('click', () => { if (sideMenu.classList.contains('open')) closeMenu(); else openMenu(); });
-        overlay.addEventListener('click', closeMenu);
+        hamburger.onclick = () => sideMenu.classList.contains('open') ? closeMenu() : openMenu();
+        overlay.onclick = closeMenu;
         document.querySelectorAll('.menu-item').forEach(link => link.addEventListener('click', closeMenu));
+
+        // Synchronisation déconnexion
+        window.addEventListener('storage', (event) => {
+            if (event.key === 'plastitrack_logout') {
+                window.location.href = '/';
+            }
+        });
 
         async function loadProfile() {
             try {
-                const res = await fetch('/api/me');
+                const res = await fetch('/api/me', { credentials: 'include' });
                 if (res.status === 401) {
                     window.location.href = '/login';
                     return;
                 }
                 const user = await res.json();
-                const depotsRes = await fetch('/api/me/depots');
+                const depotsRes = await fetch('/api/me/depots', { credentials: 'include' });
                 const depots = await depotsRes.json();
 
                 const depotsHtml = depots.map(d => `
                     <div class="depot-item">
                         <strong>${d.point_nom}</strong><br>
                         ${d.adresse ? d.adresse + '<br>' : ''}
-                        ${d.poids_kg} kg - <span style="background:#FFC107; color:#0a1f18; padding:2px 10px; border-radius:20px; font-size:0.8rem;">+${d.points_credites} pts</span><br>
+                        ${d.poids_kg} kg - <span style="background:#FFC107; color:#0a1f18; padding:2px 10px; border-radius:20px;">+${d.points_credites} pts</span><br>
                         <small>${new Date(d.date_depot).toLocaleDateString('fr-FR')}</small>
                     </div>
-                `).join('') || '<p>Aucun dépôt effectué.</p>';
+                `).join('') || '<p>Aucun dépôt.</p>';
 
                 const html = `
                     <div class="profile-container">
@@ -129,12 +136,15 @@
                     </div>
                 `;
                 document.getElementById('profileContent').innerHTML = html;
+
                 document.getElementById('logoutBtn').addEventListener('click', async () => {
-                    await fetch('/api/logout');
+                    await fetch('/api/logout', { credentials: 'include' });
+                    localStorage.setItem('plastitrack_logout', Date.now());
                     window.location.href = '/';
                 });
             } catch (err) {
-                document.getElementById('profileContent').innerHTML = '<p style="color:red;">Erreur de chargement. Veuillez vous reconnecter.</p>';
+                console.error(err);
+                document.getElementById('profileContent').innerHTML = '<p style="color:red;">Erreur de chargement.</p>';
             }
         }
         loadProfile();
