@@ -66,11 +66,11 @@ db.exec(`
 `);
 
 // Insertion de quelques points de collecte par défaut (si la table est vide)
-const stmt = db.prepare(`INSERT OR IGNORE INTO collect_points (nom, latitude, longitude, adresse, type, statut) VALUES (?, ?, ?, ?, ?, ?)`);
-stmt.run('Mairie de Niamey', 13.5121, 2.1126, 'Centre-ville', 'poubelle', 'actif');
-stmt.run('Université Abdou Moumouni', 13.5180, 2.1250, 'Campus', 'poubelle', 'actif');
-stmt.run('Marché de Wadata', 13.5050, 2.1050, 'Wadata', 'poubelle', 'actif');
-stmt.run('École Danja', 13.5234, 2.1089, 'Danja', 'poubelle', 'actif');
+//const stmt = db.prepare(`INSERT OR IGNORE INTO collect_points (nom, latitude, longitude, adresse, type, statut) VALUES (?, ?, ?, ?, ?, ?)`);
+//stmt.run('Mairie de Niamey', 13.5121, 2.1126, 'Centre-ville', 'poubelle', 'actif');
+//stmt.run('Université Abdou Moumouni', 13.5180, 2.1250, 'Campus', 'poubelle', 'actif');
+//stmt.run('Marché de Wadata', 13.5050, 2.1050, 'Wadata', 'poubelle', 'actif');
+//stmt.run('École Danja', 13.5234, 2.1089, 'Danja', 'poubelle', 'actif');
 
 const count = db.prepare(`SELECT COUNT(*) as total FROM collect_points`).get();
 if (count.total === 0) {
