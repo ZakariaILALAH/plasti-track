@@ -4,357 +4,50 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>PLASTI'TRACK - Zéro Plastique au Niger</title>
-    <!-- Font Awesome 6 (gratuit) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         /* ---------- RESET & VARIABLES ---------- */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #0a1f18;
-            color: #e0f2e9;
-            line-height: 1.5;
-            overflow-x: hidden;
-        }
-
-        /* ---------- FOND ANIMÉ ---------- */
-        .animated-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -2;
-            background: linear-gradient(135deg, #0a2e1f, #0c3b2a, #1a5a3e);
-            background-size: 300% 300%;
-            animation: gradientShift 12s ease infinite;
-        }
-
-        @keyframes gradientShift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        /* Particules flottantes */
-        .particles {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            pointer-events: none;
-        }
-
-        .particle {
-            position: absolute;
-            background: rgba(255, 193, 7, 0.3);
-            border-radius: 50%;
-            animation: floatParticle 15s infinite linear;
-        }
-
-        @keyframes floatParticle {
-            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
-            10% { opacity: 0.8; }
-            90% { opacity: 0.8; }
-            100% { transform: translateY(-20vh) rotate(360deg); opacity: 0; }
-        }
-
-        /* ---------- EN-TÊTE FIXE ---------- */
-        .main-header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            z-index: 1000;
-            background: rgba(10, 31, 24, 0.85);
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(255, 193, 7, 0.3);
-            padding: 12px 20px;
-        }
-
-        .header-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        /* Menu hamburger */
-        .hamburger {
-            font-size: 1.8rem;
-            background: none;
-            border: none;
-            color: #FFC107;
-            cursor: pointer;
-            transition: transform 0.2s;
-            width: 40px;
-            text-align: center;
-        }
-        .hamburger:hover { transform: scale(1.1); }
-
-        /* Logo au centre */
-        .logo-title {
-            font-size: 1.4rem;
-            font-weight: bold;
-            color: white;
-            text-decoration: none;
-            letter-spacing: 1px;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0a1f18; color: #e0f2e9; overflow-x: hidden; }
+        .animated-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; background: linear-gradient(135deg, #0a2e1f, #0c3b2a, #1a5a3e); background-size: 300% 300%; animation: gradientShift 12s ease infinite; }
+        @keyframes gradientShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        .particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
+        .particle { position: absolute; background: rgba(255, 193, 7, 0.3); border-radius: 50%; animation: floatParticle 15s infinite linear; }
+        @keyframes floatParticle { 0% { transform: translateY(100vh) rotate(0deg); opacity: 0; } 10% { opacity: 0.8; } 90% { opacity: 0.8; } 100% { transform: translateY(-20vh) rotate(360deg); opacity: 0; } }
+        .main-header { position: fixed; top: 0; left: 0; width: 100%; z-index: 1000; background: rgba(10,31,24,0.85); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255,193,7,0.3); padding: 12px 20px; }
+        .header-container { display: flex; justify-content: space-between; align-items: center; max-width: 1400px; margin: 0 auto; }
+        .hamburger { font-size: 1.8rem; background: none; border: none; color: #FFC107; cursor: pointer; width: 40px; }
+        .logo-title { font-size: 1.4rem; font-weight: bold; color: white; text-decoration: none; }
         .logo-title i { color: #FFC107; margin-right: 5px; }
-
-        /* Boutons connexion/inscription */
-        .auth-buttons {
-            display: flex;
-            gap: 12px;
-        }
-        .auth-btn {
-            padding: 6px 18px;
-            border-radius: 40px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: all 0.3s;
-            background: rgba(255,255,255,0.1);
-            color: white;
-            border: 1px solid rgba(255,255,255,0.3);
-            font-size: 0.9rem;
-        }
-        .auth-btn:hover {
-            background: #FFC107;
-            color: #0a1f18;
-            border-color: #FFC107;
-            transform: scale(1.02);
-        }
-        .register-btn {
-            background: #FFC107;
-            color: #0a1f18;
-        }
-
-        /* ---------- MENU LATÉRAL (OVERLAY) ---------- */
-        .side-menu {
-            position: fixed;
-            top: 0;
-            left: -300px;
-            width: 280px;
-            height: 100%;
-            background: rgba(10, 31, 24, 0.95);
-            backdrop-filter: blur(15px);
-            border-right: 1px solid rgba(255,193,7,0.3);
-            z-index: 1100;
-            transition: left 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            padding: 80px 20px 30px;
-            box-shadow: 5px 0 20px rgba(0,0,0,0.5);
-        }
+        .auth-buttons { display: flex; gap: 12px; }
+        .auth-btn { padding: 6px 18px; border-radius: 40px; text-decoration: none; font-weight: 600; background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.3); }
+        .auth-btn:hover { background: #FFC107; color: #0a1f18; }
+        .register-btn { background: #FFC107; color: #0a1f18; }
+        .side-menu { position: fixed; top: 0; left: -300px; width: 280px; height: 100%; background: rgba(10,31,24,0.95); backdrop-filter: blur(15px); border-right: 1px solid rgba(255,193,7,0.3); z-index: 1100; transition: left 0.3s; padding: 80px 20px 30px; }
         .side-menu.open { left: 0; }
-
-        .menu-items {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-        .menu-item {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            padding: 12px 20px;
-            border-radius: 50px;
-            color: #e0f2e9;
-            text-decoration: none;
-            font-weight: 500;
-            transition: all 0.3s;
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,193,7,0.2);
-        }
-        .menu-item i {
-            font-size: 1.3rem;
-            width: 30px;
-            text-align: center;
-        }
-        .menu-item:hover {
-            background: rgba(255,193,7,0.2);
-            border-color: #FFC107;
-            transform: translateX(8px);
-        }
-        .menu-item:hover i { color: #FFC107; }
-
-        /* Overlay pour fermer le menu */
-        .menu-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 1050;
-            display: none;
-        }
+        .menu-items { display: flex; flex-direction: column; gap: 15px; }
+        .menu-item { display: flex; align-items: center; gap: 15px; padding: 12px 20px; border-radius: 50px; color: #e0f2e9; text-decoration: none; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,193,7,0.2); }
+        .menu-item:hover { background: rgba(255,193,7,0.2); transform: translateX(8px); }
+        .menu-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1050; display: none; }
         .menu-overlay.active { display: block; }
-
-        /* ---------- CONTENU PRINCIPAL ---------- */
-        .main-content {
-            padding-top: 80px; /* pour compenser le header fixe */
-            min-height: 100vh;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding-left: 20px;
-            padding-right: 20px;
-        }
-
-        /* Section Hero */
-        .hero {
-            text-align: center;
-            margin: 40px 0 60px;
-        }
-        .hero h1 {
-            font-size: 3rem;
-            background: linear-gradient(135deg, #FFC107, #00A859);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            margin-bottom: 20px;
-        }
-        .hero p {
-            font-size: 1.2rem;
-            max-width: 700px;
-            margin: 0 auto 30px;
-            opacity: 0.9;
-        }
-        .btn-hero {
-            display: inline-block;
-            background: #FFC107;
-            color: #0a1f18;
-            padding: 12px 30px;
-            border-radius: 40px;
-            text-decoration: none;
-            font-weight: bold;
-            transition: all 0.3s;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-        }
-        .btn-hero:hover {
-            transform: scale(1.05);
-            background: #ffb300;
-            box-shadow: 0 0 15px rgba(255,193,7,0.5);
-        }
-
-        /* Cartes fonctionnalités */
-        .features-home {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 30px;
-            margin: 50px 0;
-        }
-        .card-feature {
-            background: rgba(255,255,255,0.08);
-            backdrop-filter: blur(8px);
-            border-radius: 25px;
-            padding: 30px;
-            width: 280px;
-            text-align: center;
-            transition: transform 0.3s, border-color 0.3s;
-            border: 1px solid rgba(255,193,7,0.3);
-        }
-        .card-feature:hover {
-            transform: translateY(-10px);
-            border-color: #FFC107;
-            background: rgba(255,193,7,0.1);
-        }
-        .card-feature i {
-            font-size: 2.5rem;
-            color: #FFC107;
-            margin-bottom: 15px;
-        }
-        .card-feature h3 {
-            margin-bottom: 10px;
-        }
-
-        /* Pied de page */
-        footer {
-            margin-top: 80px;
-            text-align: center;
-            padding: 30px 20px;
-            border-top: 1px solid rgba(255,193,7,0.2);
-            font-size: 0.9rem;
-        }
-
-        /* ---------- RESPONSIVE (MOBILE-FIRST) ---------- */
+        .main-content { padding-top: 80px; max-width: 1200px; margin: 0 auto; padding-left: 20px; padding-right: 20px; }
+        .hero { text-align: center; margin: 40px 0 60px; }
+        .hero h1 { font-size: 3rem; background: linear-gradient(135deg, #FFC107, #00A859); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .hero p { font-size: 1.2rem; max-width: 700px; margin: 20px auto; }
+        .btn-hero { display: inline-block; background: #FFC107; color: #0a1f18; padding: 12px 30px; border-radius: 40px; text-decoration: none; font-weight: bold; transition: 0.3s; }
+        .btn-hero:hover { transform: scale(1.02); }
+        .features-home { display: flex; flex-wrap: wrap; justify-content: center; gap: 30px; margin: 50px 0; }
+        .card-feature { background: rgba(255,255,255,0.08); backdrop-filter: blur(8px); border-radius: 25px; padding: 30px; width: 280px; text-align: center; border: 1px solid rgba(255,193,7,0.3); transition: 0.3s; }
+        .card-feature:hover { transform: translateY(-10px); border-color: #FFC107; }
+        .card-feature i { font-size: 2.5rem; color: #FFC107; margin-bottom: 15px; }
+        .card-feature h3 { margin-bottom: 10px; }
+        .welcome-box { text-align: center; margin: 30px 0; padding: 20px; background: rgba(0,0,0,0.3); border-radius: 30px; display: none; }
+        footer { margin-top: 80px; text-align: center; padding: 20px; border-top: 1px solid rgba(255,193,7,0.2); }
         @media (max-width: 768px) {
-            .main-header {
-                padding: 8px 15px;
-            }
-            .hamburger {
-                font-size: 1.5rem;
-                width: 35px;
-            }
-            .logo-title {
-                font-size: 1rem;
-            }
-            .logo-title span {
-                display: none; /* cache "PLASTI'TRACK" sur très petit, garde l'icône */
-            }
-            .auth-buttons {
-                gap: 6px;
-            }
-            .auth-btn {
-                padding: 4px 10px;
-                font-size: 0.7rem;
-            }
-
-            .main-content {
-                padding-top: 70px;
-                padding-left: 15px;
-                padding-right: 15px;
-            }
-
-            .hero h1 {
-                font-size: 2rem;
-            }
-            .hero p {
-                font-size: 1rem;
-            }
-            .btn-hero {
-                padding: 10px 24px;
-                font-size: 0.9rem;
-            }
-
-            .features-home {
-                gap: 20px;
-            }
-            .card-feature {
-                width: 100%;
-                max-width: 280px;
-                padding: 20px;
-            }
-
-            .side-menu {
-                width: 260px;
-                left: -260px;
-            }
-        }
-
-        /* Très petits écrans (moins de 480px) */
-        @media (max-width: 480px) {
-            .hero h1 {
-                font-size: 1.6rem;
-            }
-            .card-feature i {
-                font-size: 2rem;
-            }
-            .card-feature h3 {
-                font-size: 1.1rem;
-            }
-            .card-feature p {
-                font-size: 0.85rem;
-            }
+            .hero h1 { font-size: 2rem; }
+            .card-feature { width: 100%; max-width: 280px; }
+            .auth-btn { padding: 4px 12px; font-size: 0.8rem; }
+            .main-content { padding-left: 15px; padding-right: 15px; }
         }
     </style>
 </head>
@@ -362,7 +55,6 @@
     <div class="animated-bg"></div>
     <div class="particles" id="particles"></div>
 
-    <!-- En-tête fixe -->
     <header class="main-header">
         <div class="header-container">
             <button class="hamburger" id="hamburgerBtn"><i class="fas fa-bars"></i></button>
@@ -374,54 +66,50 @@
         </div>
     </header>
 
-    <!-- Menu latéral (overlay) -->
     <div class="side-menu" id="sideMenu">
         <div class="menu-items">
             <a href="/" class="menu-item"><i class="fas fa-home"></i> Accueil</a>
-            <a href="/objectifs" class="menu-item"><i class="fas fa-bullseye"></i> Objectifs</a>
-            <a href="/fonctionnalites" class="menu-item"><i class="fas fa-cogs"></i> Fonctionnalités</a>
-            <a href="/impact" class="menu-item"><i class="fas fa-chart-line"></i> Impact</a>
-            <a href="/carte" class="menu-item"><i class="fas fa-map-marked-alt"></i> Carte</a>
-            <a href="/dashboard" class="menu-item"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
             <a href="/galerie" class="menu-item"><i class="fas fa-images"></i> Galerie</a>
             <a href="/contact" class="menu-item"><i class="fas fa-envelope"></i> Contact</a>
         </div>
     </div>
     <div class="menu-overlay" id="menuOverlay"></div>
 
-    <!-- Contenu principal -->
     <main class="main-content">
         <section class="hero">
             <h1>Zéro Plastique au Niger</h1>
             <p>PLASTI'TRACK connecte citoyens, collecteurs et recycleurs pour une économie circulaire durable.</p>
-            <a href="/carte" class="btn-hero"><i class="fas fa-map-marker-alt"></i> Explorer la carte</a>
+            <a href="/carte" class="btn-hero">Explorer la carte</a>
         </section>
 
         <div class="features-home">
-            <div class="card-feature">
-                <i class="fas fa-mobile-alt"></i>
-                <h3>Application mobile</h3>
-                <p>Géolocalisation, signalement, suivi des récompenses.</p>
-            </div>
-            <div class="card-feature">
-                <i class="fas fa-coins"></i>
-                <h3>Récompenses</h3>
-                <p>Gagnez des points pour chaque kg déposé.</p>
-            </div>
-            <div class="card-feature">
-                <i class="fas fa-chart-line"></i>
-                <h3>Suivi en temps réel</h3>
-                <p>Dashboard opérateur et statistiques.</p>
-            </div>
+            <div class="card-feature"><i class="fas fa-mobile-alt"></i><h3>Application mobile</h3><p>Géolocalisation, signalement</p></div>
+            <div class="card-feature"><i class="fas fa-coins"></i><h3>Récompenses</h3><p>Gagnez des points</p></div>
+            <div class="card-feature"><i class="fas fa-chart-line"></i><h3>Suivi en temps réel</h3><p>Dashboard opérateur</p></div>
+        </div>
+
+        <div id="welcomeBox" class="welcome-box">
+            <p id="welcomeMessage"></p>
+            <a href="/profile" class="btn-hero" style="background:#00A859; margin-top:10px;">Voir mon profil</a>
         </div>
 
         <footer>
-            <p>© 2025 PLASTI'TRACK - Incubé par CIPMEN - Lauréat UNICEF Hackathon Zéro Plastique</p>
+            <p>© 2025 PLASTI'TRACK - Incubé par CIPMEN - Lauréat UNICEF</p>
         </footer>
     </main>
 
     <script>
-        // Génération des particules
+        // Menu hamburger
+        const hamburger = document.getElementById('hamburgerBtn');
+        const sideMenu = document.getElementById('sideMenu');
+        const overlay = document.getElementById('menuOverlay');
+        function closeMenu() { sideMenu.classList.remove('open'); overlay.classList.remove('active'); }
+        function openMenu() { sideMenu.classList.add('open'); overlay.classList.add('active'); }
+        hamburger.onclick = () => sideMenu.classList.contains('open') ? closeMenu() : openMenu();
+        overlay.onclick = closeMenu;
+        document.querySelectorAll('.menu-item').forEach(link => link.addEventListener('click', closeMenu));
+
+        // Particules
         function createParticles() {
             const container = document.getElementById('particles');
             for (let i = 0; i < 60; i++) {
@@ -439,29 +127,30 @@
         }
         createParticles();
 
-        // Menu hamburger
-        const hamburger = document.getElementById('hamburgerBtn');
-        const sideMenu = document.getElementById('sideMenu');
-        const overlay = document.getElementById('menuOverlay');
-
-        function closeMenu() {
-            sideMenu.classList.remove('open');
-            overlay.classList.remove('active');
+        // Vérifier l'état de connexion et afficher la welcome box
+        async function checkAuth() {
+            try {
+                const res = await fetch('/api/me', { credentials: 'include' });
+                if (res.ok) {
+                    const user = await res.json();
+                    const welcomeBox = document.getElementById('welcomeBox');
+                    welcomeBox.style.display = 'block';
+                    document.getElementById('welcomeMessage').innerHTML = `👋 Bonjour <strong>${user.nom}</strong> ! Bienvenue sur PLASTI'TRACK.`;
+                    // Cacher les boutons de connexion/inscription
+                    document.querySelector('.auth-buttons').style.display = 'none';
+                } else {
+                    document.getElementById('welcomeBox').style.display = 'none';
+                    document.querySelector('.auth-buttons').style.display = 'flex';
+                }
+            } catch(e) { console.error(e); }
         }
-        function openMenu() {
-            sideMenu.classList.add('open');
-            overlay.classList.add('active');
-        }
+        checkAuth();
 
-        hamburger.addEventListener('click', () => {
-            if (sideMenu.classList.contains('open')) closeMenu();
-            else openMenu();
-        });
-        overlay.addEventListener('click', closeMenu);
-
-        // Refermer le menu si on clique sur un lien
-        document.querySelectorAll('.menu-item').forEach(link => {
-            link.addEventListener('click', closeMenu);
+        // Synchronisation de déconnexion entre onglets
+        window.addEventListener('storage', (event) => {
+            if (event.key === 'plastitrack_logout') {
+                window.location.reload();
+            }
         });
     </script>
 </body>
