@@ -4,61 +4,70 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Mon profil - PLASTI'TRACK</title>
+    <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* Mêmes styles généraux que index.html (pour économiser de la place, je les réutilise) */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', sans-serif; background: #0a1f18; color: #e0f2e9; overflow-x: hidden; }
-        .animated-bg { position: fixed; top:0; left:0; width:100%; height:100%; z-index:-2; background: linear-gradient(135deg,#0a2e1f,#0c3b2a,#1a5a3e); background-size:300% 300%; animation: gradientShift 12s infinite; }
-        @keyframes gradientShift { 0%{background-position:0% 50%;} 50%{background-position:100% 50%;} 100%{background-position:0% 50%;} }
-        .particles { position: fixed; top:0; left:0; width:100%; height:100%; z-index:-1; pointer-events:none; }
-        .particle { position: absolute; background: rgba(255,193,7,0.3); border-radius: 50%; animation: floatParticle 15s infinite linear; }
-        @keyframes floatParticle { 0%{transform:translateY(100vh) rotate(0); opacity:0;} 10%{opacity:0.8;} 90%{opacity:0.8;} 100%{transform:translateY(-20vh) rotate(360deg); opacity:0;} }
-        .main-header { position: fixed; top:0; left:0; width:100%; z-index:1000; background:rgba(10,31,24,0.85); backdrop-filter:blur(12px); border-bottom:1px solid rgba(255,193,7,0.3); padding:12px 20px; }
-        .header-container { display:flex; justify-content:space-between; align-items:center; max-width:1400px; margin:0 auto; }
-        .hamburger { font-size:1.8rem; background:none; border:none; color:#FFC107; cursor:pointer; width:40px; }
-        .logo-title { font-size:1.4rem; font-weight:bold; color:white; text-decoration:none; }
-        .logo-title i { color:#FFC107; }
-        .auth-buttons { display:flex; gap:12px; }
-        .auth-btn { padding:6px 18px; border-radius:40px; text-decoration:none; font-weight:600; background:rgba(255,255,255,0.1); color:white; border:1px solid rgba(255,255,255,0.3); }
-        .auth-btn:hover { background:#FFC107; color:#0a1f18; }
-        .register-btn { background:#FFC107; color:#0a1f18; }
-        .side-menu { position:fixed; top:0; left:-300px; width:280px; height:100%; background:rgba(10,31,24,0.95); backdrop-filter:blur(15px); border-right:1px solid rgba(255,193,7,0.3); z-index:1100; transition:left 0.3s; padding:80px 20px 30px; overflow-y:auto; }
-        .side-menu.open { left:0; }
-        .menu-items { display:flex; flex-direction:column; gap:15px; }
-        .menu-item { display:flex; align-items:center; gap:15px; padding:12px 20px; border-radius:50px; color:#e0f2e9; text-decoration:none; background:rgba(255,255,255,0.05); border:1px solid rgba(255,193,7,0.2); }
-        .menu-item:hover { background:rgba(255,193,7,0.2); transform:translateX(8px); }
-        .menu-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1050; display:none; }
-        .menu-overlay.active { display:block; }
-        .main-content { padding-top:80px; max-width:1200px; margin:0 auto; padding-left:20px; padding-right:20px; }
-        .page-title { font-size:2rem; text-align:center; margin-bottom:20px; background:linear-gradient(135deg,#FFC107,#00A859); -webkit-background-clip:text; background-clip:text; color:transparent; }
-        footer { margin-top:80px; text-align:center; padding:20px; border-top:1px solid rgba(255,193,7,0.2); font-size:0.9rem; }
-
-        /* Styles spécifiques au profil */
-        .profile-container { display: flex; flex-wrap: wrap; gap: 30px; justify-content: center; }
-        .profile-card { background: rgba(255,255,255,0.08); backdrop-filter: blur(10px); border-radius: 30px; padding: 30px; width: 350px; border: 1px solid rgba(255,193,7,0.3); }
-        .profile-card h3 { color: #FFC107; margin-bottom: 20px; border-left: 4px solid #FFC107; padding-left: 15px; }
-        .profile-info p { margin: 12px 0; display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; }
-        .points-badge { background: #FFC107; color: #0a1f18; padding: 5px 15px; border-radius: 40px; font-weight: bold; display: inline-block; margin-top: 10px; }
-        .btn-carte { background: #FFC107; color: #0a1f18; padding: 10px 20px; border-radius: 40px; text-decoration: none; font-weight: bold; display: inline-block; margin-top: 20px; transition: 0.3s; }
-        .depots-list { background: rgba(255,255,255,0.08); backdrop-filter: blur(10px); border-radius: 30px; padding: 30px; flex: 1; min-width: 300px; border: 1px solid rgba(255,193,7,0.3); }
-        .depot-item { background: rgba(255,255,255,0.05); border-radius: 20px; padding: 15px; margin-bottom: 15px; }
-        .logout-btn { background: #ff6b6b; color: white; border: none; padding: 10px 20px; border-radius: 40px; cursor: pointer; font-weight: bold; margin-top: 20px; width: 100%; }
-
-        @media (max-width: 768px) {
-            .main-header { padding: 8px 15px; }
-            .hamburger { font-size: 1.5rem; width: 35px; }
-            .logo-title { font-size: 1rem; }
-            .auth-btn { padding: 4px 12px; font-size: 0.7rem; }
-            .side-menu { width: 260px; left: -260px; }
-            .main-content { padding-top: 70px; padding-left: 15px; padding-right: 15px; }
-            .page-title { font-size: 1.5rem; }
-            .profile-container { flex-direction: column; align-items: center; gap: 20px; }
-            .profile-card { width: 100%; max-width: 400px; padding: 20px; }
-            .profile-info p { flex-direction: column; gap: 5px; font-size: 0.9rem; }
-            .depots-list { width: 100%; min-width: auto; padding: 20px; }
-            .depot-item { font-size: 0.9rem; }
-            footer { margin-top: 50px; font-size: 0.8rem; }
+        .profile-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            justify-content: center;
+        }
+        .profile-card {
+            background: rgba(255,255,255,0.08);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            padding: 30px;
+            width: 350px;
+            border: 1px solid rgba(255,193,7,0.3);
+        }
+        .profile-card h3 {
+            color: #FFC107;
+            margin-bottom: 20px;
+            border-left: 4px solid #FFC107;
+            padding-left: 15px;
+        }
+        .profile-info p {
+            margin: 12px 0;
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 8px;
+        }
+        .points-badge {
+            background: #FFC107;
+            color: #0a1f18;
+            padding: 5px 15px;
+            border-radius: 40px;
+            font-weight: bold;
+            display: inline-block;
+            margin-top: 10px;
+        }
+        .depots-list {
+            background: rgba(255,255,255,0.08);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            padding: 30px;
+            flex: 1;
+            min-width: 300px;
+            border: 1px solid rgba(255,193,7,0.3);
+        }
+        .depot-item {
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        .logout-btn {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 20px;
+            width: 100%;
         }
     </style>
 </head>
@@ -123,30 +132,29 @@
         const overlay = document.getElementById('menuOverlay');
         function closeMenu() { sideMenu.classList.remove('open'); overlay.classList.remove('active'); }
         function openMenu() { sideMenu.classList.add('open'); overlay.classList.add('active'); }
-        hamburger.onclick = () => sideMenu.classList.contains('open') ? closeMenu() : openMenu();
-        overlay.onclick = closeMenu;
+        hamburger.addEventListener('click', () => { if (sideMenu.classList.contains('open')) closeMenu(); else openMenu(); });
+        overlay.addEventListener('click', closeMenu);
         document.querySelectorAll('.menu-item').forEach(link => link.addEventListener('click', closeMenu));
-
-        window.addEventListener('storage', (event) => {
-            if (event.key === 'plastitrack_logout') window.location.href = '/';
-        });
 
         async function loadProfile() {
             try {
-                const res = await fetch('/api/me', { credentials: 'include' });
-                if (res.status === 401) { window.location.href = '/login'; return; }
+                const res = await fetch('/api/me');
+                if (res.status === 401) {
+                    window.location.href = '/login';
+                    return;
+                }
                 const user = await res.json();
-                const depotsRes = await fetch('/api/me/depots', { credentials: 'include' });
+                const depotsRes = await fetch('/api/me/depots');
                 const depots = await depotsRes.json();
 
                 const depotsHtml = depots.map(d => `
                     <div class="depot-item">
                         <strong>${d.point_nom}</strong><br>
                         ${d.adresse ? d.adresse + '<br>' : ''}
-                        ${d.poids_kg} kg - <span style="background:#FFC107; color:#0a1f18; padding:2px 10px; border-radius:20px;">+${d.points_credites} pts</span><br>
+                        ${d.poids_kg} kg - <span class="points-badge" style="background:#FFC107; color:#0a1f18; padding:2px 10px; font-size:0.8rem;">+${d.points_credites} pts</span><br>
                         <small>${new Date(d.date_depot).toLocaleDateString('fr-FR')}</small>
                     </div>
-                `).join('') || '<p>Aucun dépôt.</p>';
+                `).join('') || '<p>Aucun dépôt effectué.</p>';
 
                 const html = `
                     <div class="profile-container">
@@ -161,8 +169,6 @@
                             </div>
                             <div style="text-align:center; margin:20px 0;">
                                 <span class="points-badge"><i class="fas fa-star"></i> ${user.points} points</span>
-                                <br>
-                                <a href="/carte" class="btn-carte"><i class="fas fa-map-marked-alt"></i> Aller à la carte</a>
                             </div>
                             <button id="logoutBtn" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Se déconnecter</button>
                         </div>
@@ -174,13 +180,11 @@
                 `;
                 document.getElementById('profileContent').innerHTML = html;
                 document.getElementById('logoutBtn').addEventListener('click', async () => {
-                    await fetch('/api/logout', { credentials: 'include' });
-                    localStorage.setItem('plastitrack_logout', Date.now());
+                    await fetch('/api/logout');
                     window.location.href = '/';
                 });
             } catch (err) {
-                console.error(err);
-                document.getElementById('profileContent').innerHTML = '<p style="color:red;">Erreur de chargement.</p>';
+                document.getElementById('profileContent').innerHTML = '<p style="color:red;">Erreur de chargement. Veuillez vous reconnecter.</p>';
             }
         }
         loadProfile();
