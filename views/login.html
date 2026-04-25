@@ -36,7 +36,7 @@
     </div>
     <div class="menu-overlay" id="menuOverlay"></div>
 
-    <main class="main-content">
+    <!--main class="main-content">
         <div class="login-container">
             <h2><i class="fas fa-sign-in-alt"></i> Connexion</h2>
             <form id="loginForm">
@@ -49,11 +49,31 @@
         </div>
     </main>
 
+
+    <!-- ... (début du fichier inchangé) ... -->
+
+    <main class="main-content">
+        <div class="login-container">
+            <h2><i class="fas fa-sign-in-alt"></i> Connexion</h2>
+            <!-- On retire 'action' et 'method' du formulaire pour tout gérer en JavaScript -->
+            <form id="loginForm">
+                <input type="email" id="email" placeholder="Email" required>
+                <input type="password" id="password" placeholder="Mot de passe" required>
+                <button type="submit">Se connecter</button>
+            </form>
+            <p>Pas encore inscrit ? <a href="/register" style="color:#FFC107;">Créer un compte</a></p>
+            <div id="message" class="error-message"></div>
+        </div>
+    </main>
+
+<!-- ... (reste du fichier inchangé) ... -->
+
+
     <footer>
         <p>© 2025 PLASTI'TRACK - Incubé par CIPMEN - Lauréat UNICEF</p>
     </footer>
 
-    <script>
+    <!--script>
         // Génération des particules
         function createParticles() {
             const container = document.getElementById('particles');
@@ -108,5 +128,42 @@
             }
         });
     </script>
+
+      <script>
+        // ... (particules et code du menu inchangés) ...
+
+        // Formulaire de connexion
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault(); // On empêche le rechargement de la page
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const messageDiv = document.getElementById('message');
+
+            try {
+                // 1. Envoyer la requête de connexion en arrière-plan
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include', // Important pour garder la session
+                    body: JSON.stringify({ email, password })
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    // 2. Connexion réussie : ouvrir le profil dans un nouvel onglet
+                    window.open('/profile', '_blank');
+                    // 3. Recharger la page d'accueil pour refléter l'état "connecté"
+                    //    (par exemple, afficher un message de bienvenue)
+                    window.location.reload();
+                } else {
+                    messageDiv.innerText = 'Email ou mot de passe incorrect';
+                }
+            } catch (err) {
+                console.error(err);
+                messageDiv.innerText = 'Erreur de connexion. Veuillez réessayer.';
+            }
+        });
+    </script>
+
 </body>
 </html>
