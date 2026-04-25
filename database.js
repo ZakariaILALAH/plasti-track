@@ -72,4 +72,23 @@ stmt.run('Université Abdou Moumouni', 13.5180, 2.1250, 'Campus', 'poubelle', 'a
 stmt.run('Marché de Wadata', 13.5050, 2.1050, 'Wadata', 'poubelle', 'actif');
 stmt.run('École Danja', 13.5234, 2.1089, 'Danja', 'poubelle', 'actif');
 
+const count = db.prepare(`SELECT COUNT(*) as total FROM collect_points`).get();
+if (count.total === 0) {
+  const points = [
+    { nom: "Mairie de Dosso", lat: 13.0450, lng: 3.1950, adresse: "Centre-ville, Dosso" },
+    { nom: "Marché central de Dosso", lat: 13.0432, lng: 3.1938, adresse: "Marché, Dosso" },
+    { nom: "Hôpital de Dosso", lat: 13.0462, lng: 3.1965, adresse: "Avenue de l'Hôpital" },
+    { nom: "École primaire de Goudel", lat: 13.0415, lng: 3.1910, adresse: "Quartier Goudel" },
+    { nom: "Station-service Sahoua", lat: 13.0470, lng: 3.1975, adresse: "Route nationale 1" },
+    { nom: "Université de Dosso (campus)", lat: 13.0485, lng: 3.1920, adresse: "Quartier universitaire" },
+    { nom: "Poste de police de Dosso", lat: 13.0440, lng: 3.1940, adresse: "Avenue de la Paix" },
+    { nom: "Stade municipal", lat: 13.0500, lng: 3.2000, adresse: "Sortie nord" }
+  ];
+  const insert = db.prepare(`INSERT INTO collect_points (nom, latitude, longitude, adresse, type, statut) VALUES (?, ?, ?, ?, 'poubelle', 'actif')`);
+  for (const p of points) {
+    insert.run(p.nom, p.lat, p.lng, p.adresse);
+  }
+  console.log(`${points.length} points de collecte (Dosso) insérés.`);
+}
+
 module.exports = db;
